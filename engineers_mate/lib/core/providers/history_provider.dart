@@ -1,7 +1,9 @@
 import 'dart:convert';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../../models/formula.dart';
 
+// Model
 class HistoryItem {
   final String formulaTitle;
   final String result;
@@ -30,44 +32,48 @@ class HistoryItem {
   }
 }
 
-class HistoryService {
+// Provider
+final historyProvider = AsyncNotifierProvider<HistoryNotifier, List<HistoryItem>>(HistoryNotifier.new);
+
+class HistoryNotifier extends AsyncNotifier<List<HistoryItem>> {
   static const String _key = 'calculation_history';
 
-  Future<void> saveCalculation(String formulaTitle, String result) async {
-    final prefs = await SharedPreferences.getInstance();
-    final history = await getHistory();
+  @override
+  Future<List<HistoryItem>> build() async {
+    return _loadHistory();
+  }
 
-    // Create new item
+  Future<List<HistoryItem>> _loadHistory() async {
+    final prefs = await SharedPreferences.getInstance();
+    final List<String>? jsonList = prefs.getStringList(_key);
+    if (jsonList == null) return [];
+    return jsonList.map((str) => HistoryItem.fromMap(jsonDecode(str))).toList();
+  }
+
+  Future<void> addToHistory(String formulaTitle, String result) async {
+    final prefs = await SharedPreferences.getInstance();
+    final currentList = state.value ?? [];
+
     final newItem = HistoryItem(
       formulaTitle: formulaTitle,
       result: result,
       timestamp: DateTime.now(),
     );
 
-    // Add to top
-    history.insert(0, newItem);
-
-    // Limit to 20 items
-    if (history.length > 20) {
-      history.removeRange(20, history.length);
+    final newList = [newItem, ...currentList];
+    if (newList.length > 20) {
+      newList.removeRange(20, newList.length);
     }
 
-    // Save
-    final List<String> jsonList = history.map((item) => jsonEncode(item.toMap())).toList();
+    final List<String> jsonList = newList.map((item) => jsonEncode(item.toMap())).toList();
     await prefs.setStringList(_key, jsonList);
-  }
 
-  Future<List<HistoryItem>> getHistory() async {
-    final prefs = await SharedPreferences.getInstance();
-    final List<String>? jsonList = prefs.getStringList(_key);
-
-    if (jsonList == null) return [];
-
-    return jsonList.map((str) => HistoryItem.fromMap(jsonDecode(str))).toList();
+    state = AsyncData(newList);
   }
 
   Future<void> clearHistory() async {
     final prefs = await SharedPreferences.getInstance();
     await prefs.remove(_key);
+    state = const AsyncData([]);
   }
 }

@@ -1,11 +1,14 @@
 import 'package:flutter/material.dart';
-import '../../core/services/history_service.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import '../../core/providers/history_provider.dart';
 
-class HistoryScreen extends StatelessWidget {
+class HistoryScreen extends ConsumerWidget {
   const HistoryScreen({super.key});
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    final historyAsync = ref.watch(historyProvider);
+
     return Scaffold(
       appBar: AppBar(
         title: const Text("History"),
@@ -27,28 +30,18 @@ class HistoryScreen extends StatelessWidget {
                );
 
                if (confirm == true) {
-                 await HistoryService().clearHistory();
-                 // Rebuild? This is stateless. We might need a FutureBuilder or setState in parent.
-                 // For now, let's just pop or force refresh if we used a StateNotifier.
-                 // Ideally, we use Riverpod, but for "Easy Implementation" Phase 4, FutureBuilder works.
-                 Navigator.pop(context); // Simple UX: Close screen on clear
+                 await ref.read(historyProvider.notifier).clearHistory();
+                 // No need to pop, UI updates automatically
                }
             },
           ),
         ],
       ),
-      body: FutureBuilder<List<HistoryItem>>(
-        future: HistoryService().getHistory(),
-        builder: (context, snapshot) {
-          if (snapshot.connectionState == ConnectionState.waiting) {
-            return const Center(child: CircularProgressIndicator());
-          }
-
-          if (!snapshot.hasData || snapshot.data!.isEmpty) {
+      body: historyAsync.when(
+        data: (history) {
+          if (history.isEmpty) {
             return const Center(child: Text("No history yet"));
           }
-
-          final history = snapshot.data!;
           return ListView.separated(
             itemCount: history.length,
             separatorBuilder: (ctx, i) => const Divider(),
@@ -65,6 +58,8 @@ class HistoryScreen extends StatelessWidget {
             },
           );
         },
+        loading: () => const Center(child: CircularProgressIndicator()),
+        error: (err, stack) => Center(child: Text("Error: $err")),
       ),
     );
   }

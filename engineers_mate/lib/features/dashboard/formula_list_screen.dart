@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../models/formula.dart';
 import '../solver/universal_solver_screen.dart';
 import '../electrical/resistor_color_code_screen.dart';
+import '../../core/providers/favorites_provider.dart';
 
-class FormulaListScreen extends StatelessWidget {
+class FormulaListScreen extends ConsumerWidget {
   final String category;
   final List<Formula> formulas;
 
@@ -14,14 +16,16 @@ class FormulaListScreen extends StatelessWidget {
   });
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    final favorites = ref.watch(favoritesProvider).valueOrNull ?? [];
+
     return Scaffold(
       appBar: AppBar(
         title: Row(
           children: [
             Hero(
               tag: 'icon_$category',
-              child: const Icon(Icons.electrical_services), // Note: Ideally this icon should be passed in dynamic
+              child: const Icon(Icons.electrical_services),
             ),
             const SizedBox(width: 8),
             Text(category),
@@ -42,8 +46,16 @@ class FormulaListScreen extends StatelessWidget {
                 );
               },
             ),
-          ...formulas.map((formula) => ListTile(
+          ...formulas.map((formula) {
+            final isFav = favorites.contains(formula.id);
+            return ListTile(
             title: Text(formula.title),
+            leading: IconButton(
+              icon: Icon(isFav ? Icons.star : Icons.star_border, color: isFav ? Colors.amber : null),
+              onPressed: () {
+                ref.read(favoritesProvider.notifier).toggleFavorite(formula.id);
+              },
+            ),
             trailing: formula.isPro
                 ? const Icon(Icons.lock, color: Colors.orange)
                 : const Icon(Icons.arrow_forward_ios),
@@ -84,7 +96,8 @@ class FormulaListScreen extends StatelessWidget {
                 );
               }
             },
-          )),
+          );
+          }),
         ],
       ),
     );

@@ -1,14 +1,40 @@
 import 'package:flutter/material.dart';
-import '../../core/data/electrical_formulas.dart';
-import '../../core/data/civil_formulas.dart';
-import '../../core/data/mechanical_formulas.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import '../../core/providers/formulas_provider.dart';
+import '../../models/formula.dart';
 import '../converter/quick_convert_screen.dart';
 import '../history/history_screen.dart';
 import '../ads/ad_banner.dart';
 import 'formula_list_screen.dart';
+import '../solver/universal_solver_screen.dart';
+import '../creation/formula_creation_screen.dart';
+import '../../core/ui/blueprint_background.dart';
 
-class DashboardScreen extends StatelessWidget {
+class DashboardScreen extends ConsumerStatefulWidget {
   const DashboardScreen({super.key});
+
+  @override
+  ConsumerState<DashboardScreen> createState() => _DashboardScreenState();
+}
+
+class _DashboardScreenState extends ConsumerState<DashboardScreen> {
+  bool _isSearching = false;
+  final TextEditingController _searchController = TextEditingController();
+  List<Formula> _searchResults = [];
+
+  void _runSearch(String query) {
+    if (query.isEmpty) {
+      setState(() {
+        _searchResults = [];
+      });
+      return;
+    }
+
+    final allFormulas = ref.read(formulasProvider);
+    setState(() {
+      _searchResults = allFormulas.where((f) => f.title.toLowerCase().contains(query.toLowerCase())).toList();
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -21,22 +47,79 @@ class DashboardScreen extends StatelessWidget {
             floating: false,
             pinned: true,
             flexibleSpace: FlexibleSpaceBar(
-              title: Text("Engineer's Mate"),
-              background: Placeholder(), // TODO: Add nice background image
+              title: _isSearching
+                ? TextField(
+                    controller: _searchController,
+                    autofocus: true,
+                    style: const TextStyle(color: Colors.white),
+                    decoration: const InputDecoration(
+                      hintText: "Search formulas...",
+                      hintStyle: TextStyle(color: Colors.white70),
+                      border: InputBorder.none,
+                    ),
+                    onChanged: _runSearch,
+                  )
+                : const Text("Engineer's Mate"),
+              background: const BlueprintBackground(),
             ),
             actions: [
                IconButton(
-                 icon: const Icon(Icons.history),
+                 icon: Icon(_isSearching ? Icons.close : Icons.search),
                  onPressed: () {
-                   Navigator.push(
-                     context,
-                     MaterialPageRoute(builder: (context) => const HistoryScreen()),
-                   );
+                   setState(() {
+                     _isSearching = !_isSearching;
+                     if (!_isSearching) {
+                       _searchController.clear();
+                       _searchResults = [];
+                     }
+                   });
                  },
-               )
+               ),
+               if (!_isSearching) ...[
+                 IconButton(
+                   icon: const Icon(Icons.add),
+                   onPressed: () {
+                     Navigator.push(
+                       context,
+                       MaterialPageRoute(builder: (context) => const FormulaCreationScreen()),
+                     );
+                   },
+                 ),
+                 IconButton(
+                   icon: const Icon(Icons.history),
+                   onPressed: () {
+                     Navigator.push(
+                       context,
+                       MaterialPageRoute(builder: (context) => const HistoryScreen()),
+                     );
+                   },
+                 )
+               ]
             ],
           ),
-          SliverPadding(
+          if (_isSearching)
+            SliverList(
+              delegate: SliverChildBuilderDelegate(
+                (context, index) {
+                  final formula = _searchResults[index];
+                  return ListTile(
+                    title: Text(formula.title),
+                    subtitle: Text(formula.category),
+                    onTap: () {
+                       Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => UniversalSolverScreen(formula: formula),
+                        ),
+                      );
+                    },
+                  );
+                },
+                childCount: _searchResults.length,
+              ),
+            )
+          else
+            SliverPadding(
             padding: const EdgeInsets.all(16.0),
             sliver: SliverGrid.count(
               crossAxisCount: 2,
@@ -63,6 +146,11 @@ class DashboardScreen extends StatelessWidget {
                   icon: Icons.swap_horiz,
                   color: Colors.green,
                 ),
+                CategoryCard(
+                  title: 'Custom',
+                  icon: Icons.edit_note,
+                  color: Colors.purple,
+                ),
               ],
             ),
           ),
@@ -72,7 +160,7 @@ class DashboardScreen extends StatelessWidget {
   }
 }
 
-class CategoryCard extends StatelessWidget {
+class CategoryCard extends ConsumerWidget {
   final String title;
   final IconData icon;
   final Color color;
@@ -85,38 +173,41 @@ class CategoryCard extends StatelessWidget {
   });
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     return Card(
       clipBehavior: Clip.antiAlias,
       child: InkWell(
         onTap: () {
           if (title == 'Electrical') {
+            final formulas = ref.read(formulasByCategoryProvider('Electrical'));
             Navigator.push(
               context,
               MaterialPageRoute(
                 builder: (context) => FormulaListScreen(
                   category: 'Electrical',
-                  formulas: electricalFormulas,
+                  formulas: formulas,
                 ),
               ),
             );
           } else if (title == 'Civil') {
+            final formulas = ref.read(formulasByCategoryProvider('Civil'));
             Navigator.push(
               context,
               MaterialPageRoute(
                 builder: (context) => FormulaListScreen(
                   category: 'Civil',
-                  formulas: civilFormulas,
+                  formulas: formulas,
                 ),
               ),
             );
           } else if (title == 'Mechanical') {
+            final formulas = ref.read(formulasByCategoryProvider('Mechanical'));
             Navigator.push(
               context,
               MaterialPageRoute(
                 builder: (context) => FormulaListScreen(
                   category: 'Mechanical',
-                  formulas: mechanicalFormulas,
+                  formulas: formulas,
                 ),
               ),
             );
@@ -125,6 +216,17 @@ class CategoryCard extends StatelessWidget {
               context,
               MaterialPageRoute(
                 builder: (context) => const QuickConvertScreen(),
+              ),
+            );
+          } else if (title == 'Custom') {
+             final formulas = ref.read(formulasByCategoryProvider('Custom'));
+             Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => FormulaListScreen(
+                  category: 'Custom',
+                  formulas: formulas,
+                ),
               ),
             );
           }

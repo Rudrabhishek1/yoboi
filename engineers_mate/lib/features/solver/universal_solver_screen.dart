@@ -1,17 +1,18 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../models/formula.dart';
-import '../../core/services/history_service.dart';
+import '../../core/providers/history_provider.dart';
 
-class UniversalSolverScreen extends StatefulWidget {
+class UniversalSolverScreen extends ConsumerStatefulWidget {
   final Formula formula;
 
   const UniversalSolverScreen({super.key, required this.formula});
 
   @override
-  State<UniversalSolverScreen> createState() => _UniversalSolverScreenState();
+  ConsumerState<UniversalSolverScreen> createState() => _UniversalSolverScreenState();
 }
 
-class _UniversalSolverScreenState extends State<UniversalSolverScreen> {
+class _UniversalSolverScreenState extends ConsumerState<UniversalSolverScreen> {
   late List<TextEditingController> _controllers;
   double? _result;
 
@@ -50,7 +51,7 @@ class _UniversalSolverScreenState extends State<UniversalSolverScreen> {
     });
 
     // Save to history
-    HistoryService().saveCalculation(
+    ref.read(historyProvider.notifier).addToHistory(
       widget.formula.title,
       "${_result!.toStringAsFixed(2)} ${widget.formula.resultUnit}",
     );

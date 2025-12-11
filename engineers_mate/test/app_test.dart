@@ -5,6 +5,7 @@ import 'package:engineers_mate/features/dashboard/formula_list_screen.dart';
 import 'package:engineers_mate/features/solver/universal_solver_screen.dart';
 import 'package:engineers_mate/models/formula.dart';
 import 'package:engineers_mate/core/data/electrical_formulas.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 void main() {
   testWidgets('Dashboard renders categories', (WidgetTester tester) async {
@@ -12,7 +13,11 @@ void main() {
     tester.view.physicalSize = const Size(1080, 1920);
     tester.view.devicePixelRatio = 1.0;
 
-    await tester.pumpWidget(const MaterialApp(home: DashboardScreen()));
+    await tester.pumpWidget(
+      const ProviderScope(
+        child: MaterialApp(home: DashboardScreen())
+      )
+    );
 
     expect(find.text('Electrical'), findsOneWidget);
     expect(find.text('Civil'), findsOneWidget);
@@ -24,7 +29,11 @@ void main() {
   });
 
   testWidgets('Clicking Electrical opens Formula List', (WidgetTester tester) async {
-    await tester.pumpWidget(const MaterialApp(home: DashboardScreen()));
+    await tester.pumpWidget(
+      const ProviderScope(
+        child: MaterialApp(home: DashboardScreen())
+      )
+    );
 
     await tester.tap(find.text('Electrical'));
     await tester.pumpAndSettle();
@@ -44,7 +53,11 @@ void main() {
       calculate: (inputs) => inputs[0] + inputs[1],
     );
 
-    await tester.pumpWidget(MaterialApp(home: UniversalSolverScreen(formula: formula)));
+    await tester.pumpWidget(
+      ProviderScope(
+        child: MaterialApp(home: UniversalSolverScreen(formula: formula))
+      )
+    );
 
     // Enter values
     await tester.enterText(find.byType(TextField).at(0), '10');
