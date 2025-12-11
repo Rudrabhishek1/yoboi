@@ -1,5 +1,10 @@
 import 'package:flutter/material.dart';
 import '../../core/data/electrical_formulas.dart';
+import '../../core/data/civil_formulas.dart';
+import '../../core/data/mechanical_formulas.dart';
+import '../converter/quick_convert_screen.dart';
+import '../history/history_screen.dart';
+import '../ads/ad_banner.dart';
 import 'formula_list_screen.dart';
 
 class DashboardScreen extends StatelessWidget {
@@ -8,9 +13,10 @@ class DashboardScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      bottomNavigationBar: const AdBanner(),
       body: CustomScrollView(
         slivers: [
-          const SliverAppBar(
+          SliverAppBar(
             expandedHeight: 200.0,
             floating: false,
             pinned: true,
@@ -18,6 +24,17 @@ class DashboardScreen extends StatelessWidget {
               title: Text("Engineer's Mate"),
               background: Placeholder(), // TODO: Add nice background image
             ),
+            actions: [
+               IconButton(
+                 icon: const Icon(Icons.history),
+                 onPressed: () {
+                   Navigator.push(
+                     context,
+                     MaterialPageRoute(builder: (context) => const HistoryScreen()),
+                   );
+                 },
+               )
+            ],
           ),
           SliverPadding(
             padding: const EdgeInsets.all(16.0),
@@ -83,9 +100,32 @@ class CategoryCard extends StatelessWidget {
                 ),
               ),
             );
-          } else {
-            ScaffoldMessenger.of(context).showSnackBar(
-              const SnackBar(content: Text('Module coming soon!')),
+          } else if (title == 'Civil') {
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => FormulaListScreen(
+                  category: 'Civil',
+                  formulas: civilFormulas,
+                ),
+              ),
+            );
+          } else if (title == 'Mechanical') {
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => FormulaListScreen(
+                  category: 'Mechanical',
+                  formulas: mechanicalFormulas,
+                ),
+              ),
+            );
+          } else if (title == 'Quick Convert') {
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => const QuickConvertScreen(),
+              ),
             );
           }
         },

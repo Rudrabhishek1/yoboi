@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../../models/formula.dart';
+import '../../core/services/history_service.dart';
 
 class UniversalSolverScreen extends StatefulWidget {
   final Formula formula;
@@ -47,6 +48,12 @@ class _UniversalSolverScreenState extends State<UniversalSolverScreen> {
     setState(() {
       _result = widget.formula.calculate(inputs);
     });
+
+    // Save to history
+    HistoryService().saveCalculation(
+      widget.formula.title,
+      "${_result!.toStringAsFixed(2)} ${widget.formula.resultUnit}",
+    );
   }
 
   @override

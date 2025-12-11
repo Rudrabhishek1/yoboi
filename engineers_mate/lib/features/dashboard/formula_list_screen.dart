@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '../../models/formula.dart';
 import '../solver/universal_solver_screen.dart';
+import '../electrical/resistor_color_code_screen.dart';
 
 class FormulaListScreen extends StatelessWidget {
   final String category;
@@ -27,23 +28,64 @@ class FormulaListScreen extends StatelessWidget {
           ],
         ),
       ),
-      body: ListView.builder(
-        itemCount: formulas.length,
-        itemBuilder: (context, index) {
-          final formula = formulas[index];
-          return ListTile(
+      body: ListView(
+        children: [
+          if (category == 'Electrical')
+            ListTile(
+              title: const Text("Resistor Color Code"),
+              leading: const Icon(Icons.palette),
+              trailing: const Icon(Icons.arrow_forward_ios),
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => const ResistorColorCodeScreen()),
+                );
+              },
+            ),
+          ...formulas.map((formula) => ListTile(
             title: Text(formula.title),
-            trailing: const Icon(Icons.arrow_forward_ios),
+            trailing: formula.isPro
+                ? const Icon(Icons.lock, color: Colors.orange)
+                : const Icon(Icons.arrow_forward_ios),
             onTap: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => UniversalSolverScreen(formula: formula),
-                ),
-              );
+              if (formula.isPro) {
+                showDialog(
+                  context: context,
+                  builder: (context) => AlertDialog(
+                    title: const Text("Pro Feature"),
+                    content: const Text("Watch a short video to unlock this formula for 24 hours?"),
+                    actions: [
+                      TextButton(
+                        onPressed: () => Navigator.pop(context),
+                        child: const Text("Cancel")
+                      ),
+                      FilledButton(
+                        onPressed: () {
+                          Navigator.pop(context);
+                          // Mock "Ad Watched" success
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => UniversalSolverScreen(formula: formula),
+                            ),
+                          );
+                        },
+                        child: const Text("Watch Ad"),
+                      ),
+                    ],
+                  ),
+                );
+              } else {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => UniversalSolverScreen(formula: formula),
+                  ),
+                );
+              }
             },
-          );
-        },
+          )),
+        ],
       ),
     );
   }
