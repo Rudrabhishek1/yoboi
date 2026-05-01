@@ -31,8 +31,12 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
     }
 
     final allFormulas = ref.read(formulasProvider);
+
+    // ⚡ Bolt: Cache lowercased query outside the loop to avoid O(n) string allocations per keystroke.
+    final lowerQuery = query.toLowerCase();
+
     setState(() {
-      _searchResults = allFormulas.where((f) => f.title.toLowerCase().contains(query.toLowerCase())).toList();
+      _searchResults = allFormulas.where((f) => f.title.toLowerCase().contains(lowerQuery)).toList();
     });
   }
 
