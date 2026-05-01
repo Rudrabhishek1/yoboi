@@ -1,0 +1,3 @@
+## 2023-10-27 - Add Tooltips to IconButtons for Flutter Accessibility
+**Learning:** In Flutter, icon-only buttons (`IconButton`) require a `tooltip` property to provide accessibility for screen readers and hover states for web/desktop. This is the equivalent of an `aria-label` in web accessibility.
+**Action:** Always ensure any standalone icon buttons in Flutter applications include a descriptive `tooltip` attribute to improve navigation for users relying on assistive technologies.
