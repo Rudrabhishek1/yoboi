@@ -12,9 +12,6 @@ class _AdBannerState extends State<AdBanner> {
   BannerAd? _bannerAd;
   bool _isLoaded = false;
 
-  // Test Ad Unit ID for Android
-  final String _adUnitId = 'ca-app-pub-3940256099942544/6300978111';
-
   @override
   void initState() {
     super.initState();
@@ -27,7 +24,7 @@ class _AdBannerState extends State<AdBanner> {
     // For production code, this is how we do it:
 
     // _bannerAd = BannerAd(
-    //   adUnitId: _adUnitId,
+    //   adUnitId: 'ca-app-pub-3940256099942544/6300978111',
     //   request: const AdRequest(),
     //   size: AdSize.banner,
     //   listener: BannerAdListener(
