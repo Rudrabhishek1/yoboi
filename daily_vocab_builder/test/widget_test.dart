@@ -5,20 +5,24 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:daily_vocab_builder/main.dart';
 
 void main() {
-  testWidgets('DailyVocabApp smoke test', (WidgetTester tester) async {
-    // Set up mock SharedPreferences
+  testWidgets('DailyVocabApp navigation smoke test', (WidgetTester tester) async {
     SharedPreferences.setMockInitialValues({});
 
-    // Build our app and trigger a frame.
     await tester.pumpWidget(const DailyVocabApp());
+    await tester.pumpAndSettle();
 
-    // Allow time for the futures (like SharedPreferences) to resolve
-    await tester.pump();
+    // App should start on Daily Word
+    expect(find.text('Daily Vocab Builder'), findsOneWidget);
+    expect(find.byIcon(Icons.book), findsOneWidget);
 
-    // Verify that the title is present
-    expect(find.text('Word of the Day'), findsOneWidget);
+    // Tap Quiz tab
+    await tester.tap(find.byIcon(Icons.quiz));
+    await tester.pumpAndSettle();
+    expect(find.text('What is the definition of:'), findsOneWidget);
 
-    // Verify that some text is displayed (either loading or a word)
-    expect(find.byType(Text), findsWidgets);
+    // Tap Scoreboard tab
+    await tester.tap(find.byIcon(Icons.leaderboard));
+    await tester.pumpAndSettle();
+    expect(find.text('Your Total Score'), findsOneWidget);
   });
 }
