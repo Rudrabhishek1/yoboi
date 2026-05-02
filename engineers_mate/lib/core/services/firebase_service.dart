@@ -55,12 +55,6 @@ class FirebaseService {
 
 // Provider
 final remoteFormulasProvider = FutureProvider<List<Formula>>((ref) async {
-  // We don't want to block the UI, so we return empty first if not ready?
-  // Actually FutureProvider works well.
-
-  // Try to init if not already (safeguard)
-  // await FirebaseService.initialize(); // Better to do in main, but ok here too.
-
   final dataList = await FirebaseService.fetchRemoteFormulas();
   return dataList.map((d) => d.toFormula()).toList();
 });
