@@ -37,21 +37,23 @@ final historyProvider = AsyncNotifierProvider<HistoryNotifier, List<HistoryItem>
 
 class HistoryNotifier extends AsyncNotifier<List<HistoryItem>> {
   static const String _key = 'calculation_history';
+  SharedPreferences? _prefs;
+  List<String> _jsonList = [];
 
   @override
   Future<List<HistoryItem>> build() async {
+    _prefs ??= await SharedPreferences.getInstance();
     return _loadHistory();
   }
 
   Future<List<HistoryItem>> _loadHistory() async {
-    final prefs = await SharedPreferences.getInstance();
-    final List<String>? jsonList = prefs.getStringList(_key);
-    if (jsonList == null) return [];
-    return jsonList.map((str) => HistoryItem.fromMap(jsonDecode(str))).toList();
+    _prefs ??= await SharedPreferences.getInstance();
+    _jsonList = _prefs!.getStringList(_key) ?? [];
+    return _jsonList.map((str) => HistoryItem.fromMap(jsonDecode(str))).toList();
   }
 
   Future<void> addToHistory(String formulaTitle, String result) async {
-    final prefs = await SharedPreferences.getInstance();
+    _prefs ??= await SharedPreferences.getInstance();
     final currentList = state.value ?? [];
 
     final newItem = HistoryItem(
@@ -60,20 +62,24 @@ class HistoryNotifier extends AsyncNotifier<List<HistoryItem>> {
       timestamp: DateTime.now(),
     );
 
+    final newItemJson = jsonEncode(newItem.toMap());
     final newList = [newItem, ...currentList];
+    _jsonList = [newItemJson, ..._jsonList];
+
     if (newList.length > 20) {
       newList.removeRange(20, newList.length);
+      _jsonList.removeRange(20, _jsonList.length);
     }
 
-    final List<String> jsonList = newList.map((item) => jsonEncode(item.toMap())).toList();
-    await prefs.setStringList(_key, jsonList);
+    await _prefs!.setStringList(_key, _jsonList);
 
     state = AsyncData(newList);
   }
 
   Future<void> clearHistory() async {
-    final prefs = await SharedPreferences.getInstance();
-    await prefs.remove(_key);
+    _prefs ??= await SharedPreferences.getInstance();
+    await _prefs!.remove(_key);
+    _jsonList = [];
     state = const AsyncData([]);
   }
 }
