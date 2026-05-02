@@ -18,7 +18,7 @@ class GridPainter extends CustomPainter {
   @override
   void paint(Canvas canvas, Size size) {
     final paint = Paint()
-      ..color = Colors.white.withOpacity(0.1)
+      ..color = Colors.white.withValues(alpha: 0.1)
       ..style = PaintingStyle.stroke
       ..strokeWidth = 1.0;
 
@@ -34,7 +34,7 @@ class GridPainter extends CustomPainter {
 
     // Draw some random "Technical" circles/lines
     final strongPaint = Paint()
-      ..color = Colors.white.withOpacity(0.2)
+      ..color = Colors.white.withValues(alpha: 0.2)
       ..style = PaintingStyle.stroke
       ..strokeWidth = 2.0;
 
