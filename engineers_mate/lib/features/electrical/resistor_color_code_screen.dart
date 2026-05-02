@@ -18,11 +18,6 @@ class _ResistorColorCodeScreenState extends State<ResistorColorCodeScreen> {
     Colors.green, Colors.blue, Colors.purple, Colors.grey, Colors.white
   ];
 
-  final List<String> _bandNames = [
-    "Black", "Brown", "Red", "Orange", "Yellow",
-    "Green", "Blue", "Violet", "Grey", "White"
-  ];
-
   int _band1 = 1; // Brown
   int _band2 = 0; // Black
   int _multiplier = 2; // Red (x100) -> 1k Ohm
