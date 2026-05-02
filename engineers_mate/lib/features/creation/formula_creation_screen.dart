@@ -25,7 +25,40 @@ class _FormulaCreationScreenState extends ConsumerState<FormulaCreationScreen> {
       return;
     }
 
-    final variables = variablesStr.split(',').map((e) => e.trim()).toList();
+    if (title.length > 50) {
+      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("Title cannot exceed 50 characters")));
+      return;
+    }
+
+    if (expression.length > 200) {
+      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("Expression cannot exceed 200 characters")));
+      return;
+    }
+
+    final expressionRegex = RegExp(r'^[a-zA-Z0-9+\-*/^().\s]+$');
+    if (!expressionRegex.hasMatch(expression)) {
+      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("Expression contains invalid characters")));
+      return;
+    }
+
+    final variables = variablesStr.split(',').map((e) => e.trim()).where((e) => e.isNotEmpty).toList();
+
+    if (variables.length > 10) {
+      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("Cannot exceed 10 variables")));
+      return;
+    }
+
+    final variableRegex = RegExp(r'^[a-zA-Z][a-zA-Z0-9_]*$');
+    for (var v in variables) {
+      if (v.length > 20) {
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("Variable '$v' exceeds 20 characters")));
+        return;
+      }
+      if (!variableRegex.hasMatch(v)) {
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("Invalid variable name: '$v'")));
+        return;
+      }
+    }
 
     // Validate Expression
     try {
