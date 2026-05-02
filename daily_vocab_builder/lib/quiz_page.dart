@@ -17,6 +17,7 @@ class _QuizPageState extends State<QuizPage> {
   List<String> _options = [];
   bool _answered = false;
   bool _isCorrect = false;
+  String? _selectedOption;
 
   InterstitialAd? _interstitialAd;
 
@@ -77,6 +78,7 @@ class _QuizPageState extends State<QuizPage> {
   void _handleAnswer(String selectedDefinition) async {
     setState(() {
       _answered = true;
+      _selectedOption = selectedDefinition;
       _isCorrect = selectedDefinition == _targetWord!.definition;
     });
 
@@ -108,30 +110,48 @@ class _QuizPageState extends State<QuizPage> {
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
           const SizedBox(height: 16),
-          Text(
-            'What is the definition of:',
-            style: Theme.of(context).textTheme.titleLarge,
-            textAlign: TextAlign.center,
-          ),
-          const SizedBox(height: 8),
-          Text(
-            _targetWord!.word,
-            style: Theme.of(context).textTheme.displayLarge?.copyWith(color: Colors.deepPurple),
-            textAlign: TextAlign.center,
+          Card(
+            elevation: 4.0,
+            color: Colors.deepPurple.withValues(alpha: 0.05),
+            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+            child: Padding(
+              padding: const EdgeInsets.symmetric(vertical: 24.0, horizontal: 16.0),
+              child: Column(
+                children: [
+                  Text(
+                    'What is the definition of:',
+                    style: Theme.of(context).textTheme.titleLarge,
+                    textAlign: TextAlign.center,
+                  ),
+                  const SizedBox(height: 16),
+                  Text(
+                    _targetWord!.word,
+                    style: Theme.of(context).textTheme.displayLarge?.copyWith(color: Colors.deepPurple),
+                    textAlign: TextAlign.center,
+                  ),
+                ],
+              ),
+            ),
           ),
           const SizedBox(height: 32),
           Expanded(
-            child: ListView.builder(
-              itemCount: _options.length,
-              itemBuilder: (context, index) {
+            child: Container(
+              padding: const EdgeInsets.all(8.0),
+              decoration: BoxDecoration(
+                color: Colors.grey.withValues(alpha: 0.1),
+                borderRadius: BorderRadius.circular(16),
+              ),
+              child: ListView.builder(
+                itemCount: _options.length,
+                itemBuilder: (context, index) {
                 String option = _options[index];
 
                 Color? buttonColor;
                 if (_answered) {
                   if (option == _targetWord!.definition) {
                     buttonColor = Colors.green; // Correct answer
-                  } else if (!(_isCorrect) && option != _targetWord!.definition) {
-                     buttonColor = Colors.red.withOpacity(0.5); // Incorrect options if user got it wrong
+                  } else if (_selectedOption == option) {
+                     buttonColor = Colors.red.withOpacity(0.5); // Highlight the wrong option the user selected
                   }
                 }
 
@@ -139,22 +159,39 @@ class _QuizPageState extends State<QuizPage> {
                 // which forces the default grey disabled color.
                 return Padding(
                   padding: const EdgeInsets.only(bottom: 12.0),
-                  child: ElevatedButton(
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: buttonColor,
-                      padding: const EdgeInsets.all(16),
-                      // Keep text color dark if background is colored, else standard
-                      foregroundColor: buttonColor != null ? Colors.white : null,
+                  child: AnimatedContainer(
+                    duration: const Duration(milliseconds: 300),
+                    curve: Curves.easeInOut,
+                    decoration: BoxDecoration(
+                      color: buttonColor ?? Colors.deepPurple.withValues(alpha: 0.1),
+                      borderRadius: BorderRadius.circular(12),
+                      boxShadow: buttonColor != null
+                        ? [BoxShadow(color: buttonColor.withValues(alpha: 0.5), blurRadius: 8, spreadRadius: 2)]
+                        : [],
                     ),
-                    onPressed: _answered ? () {} : () => _handleAnswer(option),
-                    child: Text(
-                      option,
-                      style: const TextStyle(fontSize: 16),
-                      textAlign: TextAlign.center,
+                    child: Material(
+                      color: Colors.transparent,
+                      child: InkWell(
+                        borderRadius: BorderRadius.circular(12),
+                        onTap: _answered ? null : () => _handleAnswer(option),
+                        child: Padding(
+                          padding: const EdgeInsets.all(16),
+                          child: Text(
+                            option,
+                            style: TextStyle(
+                              fontSize: 16,
+                              color: buttonColor != null ? Colors.white : Colors.black87,
+                              fontWeight: buttonColor != null ? FontWeight.bold : FontWeight.normal,
+                            ),
+                            textAlign: TextAlign.center,
+                          ),
+                        ),
+                      ),
                     ),
                   ),
                 );
               },
+              ),
             ),
           ),
           if (_answered)

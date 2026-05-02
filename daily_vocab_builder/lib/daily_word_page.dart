@@ -14,14 +14,17 @@ class DailyWordPage extends StatefulWidget {
 
 class _DailyWordPageState extends State<DailyWordPage> {
   VocabWord? _currentWord;
-  BannerAd? _bannerAd;
-  bool _isAdLoaded = false;
+  BannerAd? _bottomBannerAd;
+  BannerAd? _topBannerAd;
+  bool _isBottomAdLoaded = false;
+  bool _isTopAdLoaded = false;
 
   @override
   void initState() {
     super.initState();
     _loadDailyWord();
-    _loadBannerAd();
+    _loadBottomBannerAd();
+    _loadTopBannerAd();
   }
 
   Future<void> _loadDailyWord() async {
@@ -47,23 +50,41 @@ class _DailyWordPageState extends State<DailyWordPage> {
     });
   }
 
-  void _loadBannerAd() {
-    // Android test banner ad unit ID
+  void _loadBottomBannerAd() {
     final String adUnitId = 'ca-app-pub-3940256099942544/6300978111';
 
-    _bannerAd = BannerAd(
+    _bottomBannerAd = BannerAd(
       adUnitId: adUnitId,
       size: AdSize.banner,
       request: const AdRequest(),
       listener: BannerAdListener(
         onAdLoaded: (_) {
           setState(() {
-            _isAdLoaded = true;
+            _isBottomAdLoaded = true;
           });
         },
         onAdFailedToLoad: (ad, error) {
           ad.dispose();
-          debugPrint('Ad failed to load: $error');
+        },
+      ),
+    )..load();
+  }
+
+  void _loadTopBannerAd() {
+    final String adUnitId = 'ca-app-pub-3940256099942544/6300978111';
+
+    _topBannerAd = BannerAd(
+      adUnitId: adUnitId,
+      size: AdSize.banner,
+      request: const AdRequest(),
+      listener: BannerAdListener(
+        onAdLoaded: (_) {
+          setState(() {
+            _isTopAdLoaded = true;
+          });
+        },
+        onAdFailedToLoad: (ad, error) {
+          ad.dispose();
         },
       ),
     )..load();
@@ -71,7 +92,8 @@ class _DailyWordPageState extends State<DailyWordPage> {
 
   @override
   void dispose() {
-    _bannerAd?.dispose();
+    _bottomBannerAd?.dispose();
+    _topBannerAd?.dispose();
     super.dispose();
   }
 
@@ -79,6 +101,13 @@ class _DailyWordPageState extends State<DailyWordPage> {
   Widget build(BuildContext context) {
     return Column(
       children: [
+        if (_isTopAdLoaded && _topBannerAd != null)
+          Container(
+            alignment: Alignment.center,
+            width: _topBannerAd!.size.width.toDouble(),
+            height: _topBannerAd!.size.height.toDouble(),
+            child: AdWidget(ad: _topBannerAd!),
+          ),
         Expanded(
           child: _currentWord == null
               ? const Center(child: CircularProgressIndicator())
@@ -94,16 +123,17 @@ class _DailyWordPageState extends State<DailyWordPage> {
                         textAlign: TextAlign.center,
                       ),
                       const SizedBox(height: 24),
-                      Container(
-                        padding: const EdgeInsets.all(16),
-                        decoration: BoxDecoration(
-                          color: Colors.blue.withOpacity(0.1),
-                          borderRadius: BorderRadius.circular(12),
-                        ),
-                        child: Text(
-                          _currentWord!.definition,
-                          style: Theme.of(context).textTheme.bodyLarge,
-                          textAlign: TextAlign.center,
+                      Card(
+                        elevation: 4.0,
+                        color: Colors.deepPurple.withValues(alpha: 0.1),
+                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                        child: Padding(
+                          padding: const EdgeInsets.all(20.0),
+                          child: Text(
+                            _currentWord!.definition,
+                            style: Theme.of(context).textTheme.bodyLarge,
+                            textAlign: TextAlign.center,
+                          ),
                         ),
                       ),
                       const SizedBox(height: 24),
@@ -122,12 +152,12 @@ class _DailyWordPageState extends State<DailyWordPage> {
                   ),
                 ),
         ),
-        if (_isAdLoaded && _bannerAd != null)
+        if (_isBottomAdLoaded && _bottomBannerAd != null)
           Container(
             alignment: Alignment.center,
-            width: _bannerAd!.size.width.toDouble(),
-            height: _bannerAd!.size.height.toDouble(),
-            child: AdWidget(ad: _bannerAd!),
+            width: _bottomBannerAd!.size.width.toDouble(),
+            height: _bottomBannerAd!.size.height.toDouble(),
+            child: AdWidget(ad: _bottomBannerAd!),
           ),
       ],
     );

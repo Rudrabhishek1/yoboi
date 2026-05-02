@@ -19,11 +19,11 @@ class DailyVocabApp extends StatelessWidget {
     return MaterialApp(
       title: 'Daily Vocab Builder',
       theme: ThemeData(
-        primarySwatch: Colors.blue,
+        primarySwatch: Colors.deepPurple,
         visualDensity: VisualDensity.adaptivePlatformDensity,
         textTheme: const TextTheme(
-          displayLarge: TextStyle(fontSize: 48, fontWeight: FontWeight.bold, color: Colors.blueAccent),
-          bodyLarge: TextStyle(fontSize: 24, fontStyle: FontStyle.italic),
+          displayLarge: TextStyle(fontSize: 48, fontWeight: FontWeight.w800, color: Colors.deepPurpleAccent),
+          bodyLarge: TextStyle(fontSize: 22, fontStyle: FontStyle.italic, fontWeight: FontWeight.w500),
           bodyMedium: TextStyle(fontSize: 20),
         ),
       ),
