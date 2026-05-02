@@ -1,7 +1,6 @@
 import 'dart:convert';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import '../../models/formula.dart';
 
 // Model
 class HistoryItem {
@@ -37,21 +36,46 @@ final historyProvider = AsyncNotifierProvider<HistoryNotifier, List<HistoryItem>
 
 class HistoryNotifier extends AsyncNotifier<List<HistoryItem>> {
   static const String _key = 'calculation_history';
+  static const String _keyV2 = 'calculation_history_v2';
+  SharedPreferences? _prefs;
 
   @override
   Future<List<HistoryItem>> build() async {
+    _prefs ??= await SharedPreferences.getInstance();
     return _loadHistory();
   }
 
   Future<List<HistoryItem>> _loadHistory() async {
-    final prefs = await SharedPreferences.getInstance();
-    final List<String>? jsonList = prefs.getStringList(_key);
+    _prefs ??= await SharedPreferences.getInstance();
+
+    // Check for V2 storage first (single JSON string)
+    final String? jsonString = _prefs!.getString(_keyV2);
+    if (jsonString != null) {
+      final List<dynamic> decoded = jsonDecode(jsonString);
+      return decoded.map((map) => HistoryItem.fromMap(map)).toList();
+    }
+
+    // Fallback to V1 storage (list of JSON strings) and migrate
+    final List<String>? jsonList = _prefs!.getStringList(_key);
     if (jsonList == null) return [];
-    return jsonList.map((str) => HistoryItem.fromMap(jsonDecode(str))).toList();
+
+    final history = jsonList.map((str) => HistoryItem.fromMap(jsonDecode(str))).toList();
+
+    // Migrate to V2
+    await _saveHistoryV2(history);
+    await _prefs!.remove(_key);
+
+    return history;
+  }
+
+  Future<void> _saveHistoryV2(List<HistoryItem> history) async {
+    _prefs ??= await SharedPreferences.getInstance();
+    final String jsonString = jsonEncode(history.map((item) => item.toMap()).toList());
+    await _prefs!.setString(_keyV2, jsonString);
   }
 
   Future<void> addToHistory(String formulaTitle, String result) async {
-    final prefs = await SharedPreferences.getInstance();
+    _prefs ??= await SharedPreferences.getInstance();
     final currentList = state.value ?? [];
 
     final newItem = HistoryItem(
@@ -65,15 +89,15 @@ class HistoryNotifier extends AsyncNotifier<List<HistoryItem>> {
       newList.removeRange(20, newList.length);
     }
 
-    final List<String> jsonList = newList.map((item) => jsonEncode(item.toMap())).toList();
-    await prefs.setStringList(_key, jsonList);
+    await _saveHistoryV2(newList);
 
     state = AsyncData(newList);
   }
 
   Future<void> clearHistory() async {
-    final prefs = await SharedPreferences.getInstance();
-    await prefs.remove(_key);
+    _prefs ??= await SharedPreferences.getInstance();
+    await _prefs!.remove(_key);
+    await _prefs!.remove(_keyV2);
     state = const AsyncData([]);
   }
 }
