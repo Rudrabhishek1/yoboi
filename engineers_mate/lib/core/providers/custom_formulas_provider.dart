@@ -60,22 +60,50 @@ final customFormulasProvider = AsyncNotifierProvider<CustomFormulasNotifier, Lis
 
 class CustomFormulasNotifier extends AsyncNotifier<List<CustomFormulaData>> {
   static const String _key = 'custom_formulas';
+  static const String _keyV2 = 'custom_formulas_v2';
+  SharedPreferences? _prefs;
 
   @override
   Future<List<CustomFormulaData>> build() async {
-    final prefs = await SharedPreferences.getInstance();
-    final List<String>? jsonList = prefs.getStringList(_key);
+    _prefs ??= await SharedPreferences.getInstance();
+    return _loadFormulas();
+  }
+
+  Future<List<CustomFormulaData>> _loadFormulas() async {
+    _prefs ??= await SharedPreferences.getInstance();
+
+    // Check for V2 storage
+    final String? jsonString = _prefs!.getString(_keyV2);
+    if (jsonString != null) {
+      final List<dynamic> decoded = jsonDecode(jsonString);
+      return decoded.map((map) => CustomFormulaData.fromMap(map)).toList();
+    }
+
+    // Fallback to V1 and migrate
+    final List<String>? jsonList = _prefs!.getStringList(_key);
     if (jsonList == null) return [];
-    return jsonList.map((str) => CustomFormulaData.fromMap(jsonDecode(str))).toList();
+
+    final formulas = jsonList.map((str) => CustomFormulaData.fromMap(jsonDecode(str))).toList();
+
+    // Migrate
+    await _saveFormulasV2(formulas);
+    await _prefs!.remove(_key);
+
+    return formulas;
+  }
+
+  Future<void> _saveFormulasV2(List<CustomFormulaData> formulas) async {
+    _prefs ??= await SharedPreferences.getInstance();
+    final String jsonString = jsonEncode(formulas.map((item) => item.toMap()).toList());
+    await _prefs!.setString(_keyV2, jsonString);
   }
 
   Future<void> addFormula(CustomFormulaData data) async {
-    final prefs = await SharedPreferences.getInstance();
+    _prefs ??= await SharedPreferences.getInstance();
     final currentList = state.value ?? [];
     final newList = [...currentList, data];
 
-    final List<String> jsonList = newList.map((item) => jsonEncode(item.toMap())).toList();
-    await prefs.setStringList(_key, jsonList);
+    await _saveFormulasV2(newList);
 
     state = AsyncData(newList);
   }
