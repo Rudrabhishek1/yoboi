@@ -1,7 +1,6 @@
 import 'dart:convert';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import '../../models/formula.dart';
 
 // Model
 class HistoryItem {
@@ -37,21 +36,23 @@ final historyProvider = AsyncNotifierProvider<HistoryNotifier, List<HistoryItem>
 
 class HistoryNotifier extends AsyncNotifier<List<HistoryItem>> {
   static const String _key = 'calculation_history';
+  SharedPreferences? _prefs;
 
   @override
   Future<List<HistoryItem>> build() async {
+    _prefs = await SharedPreferences.getInstance();
     return _loadHistory();
   }
 
   Future<List<HistoryItem>> _loadHistory() async {
-    final prefs = await SharedPreferences.getInstance();
+    final prefs = _prefs ??= await SharedPreferences.getInstance();
     final List<String>? jsonList = prefs.getStringList(_key);
     if (jsonList == null) return [];
     return jsonList.map((str) => HistoryItem.fromMap(jsonDecode(str))).toList();
   }
 
   Future<void> addToHistory(String formulaTitle, String result) async {
-    final prefs = await SharedPreferences.getInstance();
+    final prefs = _prefs ??= await SharedPreferences.getInstance();
     final currentList = state.value ?? [];
 
     final newItem = HistoryItem(
@@ -72,7 +73,7 @@ class HistoryNotifier extends AsyncNotifier<List<HistoryItem>> {
   }
 
   Future<void> clearHistory() async {
-    final prefs = await SharedPreferences.getInstance();
+    final prefs = _prefs ??= await SharedPreferences.getInstance();
     await prefs.remove(_key);
     state = const AsyncData([]);
   }
