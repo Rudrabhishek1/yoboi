@@ -35,4 +35,25 @@ void main() {
     expect(history.first.formulaTitle, "Test Formula");
     expect(history.first.result, "42.00 m");
   });
+
+  test('HistoryNotifier clears history', () async {
+    SharedPreferences.setMockInitialValues({});
+    final container = ProviderContainer();
+
+    // Add something to history first
+    await container.read(historyProvider.notifier).addToHistory("To Be Cleared", "100");
+    var history = await container.read(historyProvider.future);
+    expect(history.length, 1);
+
+    // Clear history
+    await container.read(historyProvider.notifier).clearHistory();
+
+    // Verify provider state
+    history = await container.read(historyProvider.future);
+    expect(history, isEmpty);
+
+    // Verify SharedPreferences
+    final prefs = await SharedPreferences.getInstance();
+    expect(prefs.containsKey('calculation_history'), isFalse);
+  });
 }
