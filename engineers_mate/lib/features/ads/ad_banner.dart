@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:google_mobile_ads/google_mobile_ads.dart';
 
 class AdBanner extends StatefulWidget {
   const AdBanner({super.key});
@@ -9,11 +8,7 @@ class AdBanner extends StatefulWidget {
 }
 
 class _AdBannerState extends State<AdBanner> {
-  BannerAd? _bannerAd;
   bool _isLoaded = false;
-
-  // Test Ad Unit ID for Android
-  final String _adUnitId = 'ca-app-pub-3940256099942544/6300978111';
 
   @override
   void initState() {
@@ -22,26 +17,6 @@ class _AdBannerState extends State<AdBanner> {
   }
 
   void _loadAd() {
-    // In this environment, we cannot actually load Ads.
-    // So we will just simulate "Loaded" state or just do nothing if dependencies aren't set up for real execution.
-    // For production code, this is how we do it:
-
-    // _bannerAd = BannerAd(
-    //   adUnitId: _adUnitId,
-    //   request: const AdRequest(),
-    //   size: AdSize.banner,
-    //   listener: BannerAdListener(
-    //     onAdLoaded: (ad) {
-    //       setState(() {
-    //         _isLoaded = true;
-    //       });
-    //     },
-    //     onAdFailedToLoad: (ad, err) {
-    //       ad.dispose();
-    //     },
-    //   ),
-    // )..load();
-
     // For this simulation/test environment:
     setState(() {
       _isLoaded = true; // Pretend we loaded an ad
