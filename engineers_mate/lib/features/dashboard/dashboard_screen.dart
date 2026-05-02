@@ -237,7 +237,7 @@ class CategoryCard extends ConsumerWidget {
               begin: Alignment.topLeft,
               end: Alignment.bottomRight,
               colors: [
-                color.withOpacity(0.7),
+                color.withValues(alpha: 0.7),
                 color,
               ],
             ),
