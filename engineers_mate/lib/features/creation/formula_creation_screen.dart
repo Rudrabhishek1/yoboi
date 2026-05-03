@@ -16,16 +16,67 @@ class _FormulaCreationScreenState extends ConsumerState<FormulaCreationScreen> {
   final _variablesController = TextEditingController(); // Comma separated for now
 
   void _save() async {
-    final title = _titleController.text;
-    final expression = _expressionController.text;
-    final variablesStr = _variablesController.text;
+    final title = _titleController.text.trim();
+    final expression = _expressionController.text.trim();
+    final variablesStr = _variablesController.text.trim();
 
     if (title.isEmpty || expression.isEmpty || variablesStr.isEmpty) {
-      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("Please fill all fields")));
+      ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text("Please fill all fields")));
       return;
     }
 
-    final variables = variablesStr.split(',').map((e) => e.trim()).toList();
+    if (title.length > 50) {
+      ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text("Title must be 50 characters or less")));
+      return;
+    }
+
+    if (expression.length > 200) {
+      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+          content: Text("Expression must be 200 characters or less")));
+      return;
+    }
+
+    // Strict character whitelist for expression
+    final expressionRegex = RegExp(r'^[a-zA-Z0-9+\-*/^()., ]+$');
+    if (!expressionRegex.hasMatch(expression)) {
+      ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text("Expression contains invalid characters")));
+      return;
+    }
+
+    final variables = variablesStr
+        .split(',')
+        .map((e) => e.trim())
+        .where((e) => e.isNotEmpty)
+        .toList();
+
+    if (variables.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text("Please provide at least one variable")));
+      return;
+    }
+
+    if (variables.length > 10) {
+      ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text("Maximum of 10 variables allowed")));
+      return;
+    }
+
+    final variableRegex = RegExp(r'^[a-zA-Z][a-zA-Z0-9_]*$');
+    for (var v in variables) {
+      if (v.length > 20) {
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+            content: Text("Variable name '$v' is too long (max 20 chars)")));
+        return;
+      }
+      if (!variableRegex.hasMatch(v)) {
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+            content: Text("Invalid variable name '$v'. Use alphanumeric/underscore starting with a letter.")));
+        return;
+      }
+    }
 
     // Validate Expression
     try {
@@ -38,7 +89,8 @@ class _FormulaCreationScreenState extends ConsumerState<FormulaCreationScreen> {
       }
       exp.evaluate(EvaluationType.REAL, cm);
     } catch (e) {
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("Invalid Expression: $e")));
+      ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text("Invalid Expression: $e")));
       return;
     }
 
