@@ -24,6 +24,11 @@ void main() {
       expect(f.calculate([100, 20]), 5.0);
     });
 
+    test('Gear Ratio handles division by zero', () {
+      final f = mechanicalFormulas.firstWhere((e) => e.id == 'gear_ratio');
+      expect(f.calculate([10, 0]), 0.0);
+    });
+
     test('Heat Transfer', () {
       final f = mechanicalFormulas.firstWhere((e) => e.id == 'heat_transfer_conduction');
       // k=10, A=2, dT=50, d=0.1

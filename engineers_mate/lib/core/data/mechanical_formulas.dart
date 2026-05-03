@@ -18,7 +18,10 @@ final List<Formula> mechanicalFormulas = [
     inputLabels: ['Teeth Driven (N2)', 'Teeth Driver (N1)'],
     inputUnits: ['count', 'count'],
     resultUnit: ': 1',
-    calculate: (inputs) => inputs[0] / inputs[1],
+    calculate: (inputs) {
+      if (inputs[1] == 0) return 0.0;
+      return inputs[0] / inputs[1];
+    },
   ),
   Formula(
     id: 'heat_transfer_conduction',
