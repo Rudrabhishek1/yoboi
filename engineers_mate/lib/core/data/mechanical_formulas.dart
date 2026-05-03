@@ -1,5 +1,4 @@
 import '../../models/formula.dart';
-import 'dart:math';
 
 final List<Formula> mechanicalFormulas = [
   Formula(
