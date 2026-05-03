@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:units_converter/units_converter.dart';
 
 class QuickConvertScreen extends StatefulWidget {
@@ -110,9 +111,15 @@ class _QuickConvertScreenState extends State<QuickConvertScreen> {
                   TextField(
                     controller: _inputController,
                     keyboardType: const TextInputType.numberWithOptions(decimal: true),
+                    maxLength: 50,
+                    maxLengthEnforcement: MaxLengthEnforcement.enforced,
+                    inputFormatters: [
+                      FilteringTextInputFormatter.allow(RegExp(r'[0-9\.\-\+eE]')),
+                    ],
                     decoration: const InputDecoration(
                       labelText: "Value",
                       border: OutlineInputBorder(),
+                      counterText: "",
                     ),
                     onChanged: (value) {
                       setState(() {
