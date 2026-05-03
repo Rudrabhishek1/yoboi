@@ -72,9 +72,14 @@ class CustomFormulasNotifier extends AsyncNotifier<List<CustomFormulaData>> {
   Future<void> addFormula(CustomFormulaData data) async {
     final prefs = await SharedPreferences.getInstance();
     final currentList = state.value ?? [];
-    final newList = [...currentList, data];
+    var newList = [...currentList, data];
 
-    final List<String> jsonList = newList.map((item) => jsonEncode(item.toMap())).toList();
+    if (newList.length > 20) {
+      newList = newList.sublist(newList.length - 20);
+    }
+
+    final List<String> jsonList =
+        newList.map((item) => jsonEncode(item.toMap())).toList();
     await prefs.setStringList(_key, jsonList);
 
     state = AsyncData(newList);
