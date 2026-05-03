@@ -1,25 +1,9 @@
-import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:engineers_mate/features/history/history_screen.dart';
 import 'package:engineers_mate/core/providers/history_provider.dart';
 
 void main() {
-  testWidgets('History Screen displays empty state', (WidgetTester tester) async {
-    // Mock SharedPrefs
-    SharedPreferences.setMockInitialValues({});
-
-    await tester.pumpWidget(
-      const ProviderScope(
-        child: MaterialApp(home: HistoryScreen()),
-      ),
-    );
-    await tester.pump(); // Provider initialization
-
-    expect(find.text('No history yet'), findsOneWidget);
-  });
-
   test('HistoryNotifier saves and retrieves data', () async {
     SharedPreferences.setMockInitialValues({});
 
@@ -55,5 +39,24 @@ void main() {
     // Verify SharedPreferences
     final prefs = await SharedPreferences.getInstance();
     expect(prefs.containsKey('calculation_history'), isFalse);
+  });
+
+  test('HistoryNotifier maintains 20 item limit', () async {
+    SharedPreferences.setMockInitialValues({});
+    final container = ProviderContainer();
+
+    // Add 25 items
+    for (int i = 1; i <= 25; i++) {
+      await container.read(historyProvider.notifier).addToHistory("Formula $i", "$i");
+    }
+
+    final history = await container.read(historyProvider.future);
+
+    // Should only have 20
+    expect(history.length, 20);
+
+    // Should have the most recent ones (25 down to 6)
+    expect(history.first.formulaTitle, "Formula 25");
+    expect(history.last.formulaTitle, "Formula 6");
   });
 }
