@@ -1,0 +1,4 @@
+## 2024-05-18 - [Denial of Service via Unrestricted Text Input]
+**Vulnerability:** TextFields in the application (like `UniversalSolverScreen`, `FormulaCreationScreen`, and the Dashboard search) lacked input length restrictions (`maxLength`).
+**Learning:** Flutter applications can suffer from memory exhaustion or performance degradation (Denial of Service) when excessively long strings are pasted into unrestricted input fields, especially if that input is subsequently parsed (e.g., by the `math_expressions` package) or used in complex layout calculations.
+**Prevention:** Always implement `maxLength` constraints on all `TextField` and `TextFormField` widgets to strictly limit input size based on expected use cases. Use `counterText: ""` to hide the UI counter if not needed. Additionally, use `inputFormatters` for numeric fields to reject invalid characters early.
