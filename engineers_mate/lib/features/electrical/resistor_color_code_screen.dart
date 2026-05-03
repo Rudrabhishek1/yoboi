@@ -1,3 +1,4 @@
+import 'dart:math' as math;
 import 'package:flutter/material.dart';
 
 class ResistorColorCodeScreen extends StatefulWidget {
@@ -18,18 +19,12 @@ class _ResistorColorCodeScreenState extends State<ResistorColorCodeScreen> {
     Colors.green, Colors.blue, Colors.purple, Colors.grey, Colors.white
   ];
 
-  final List<String> _bandNames = [
-    "Black", "Brown", "Red", "Orange", "Yellow",
-    "Green", "Blue", "Violet", "Grey", "White"
-  ];
-
   int _band1 = 1; // Brown
   int _band2 = 0; // Black
   int _multiplier = 2; // Red (x100) -> 1k Ohm
   int _toleranceIndex = 2; // Gold
 
   final List<Color> _toleranceColors = [Colors.brown, Colors.red, const Color(0xFFFFD700), const Color(0xFFC0C0C0)];
-  final List<String> _toleranceNames = ["Brown (1%)", "Red (2%)", "Gold (5%)", "Silver (10%)"];
   final List<num> _toleranceValues = [1, 2, 5, 10];
 
   double get _resistance {
@@ -39,16 +34,7 @@ class _ResistorColorCodeScreenState extends State<ResistorColorCodeScreen> {
     // For simplicity, let's stick to the 10 basic colors for multiplier for now, or add Gold/Silver if needed.
     // Standard 4-band usually uses standard colors for multiplier.
     // let's assume standard colors for multiplier (0-9).
-    return digits *  _pow(10, _multiplier).toDouble();
-  }
-
-  num _pow(num x, num exponent) {
-    if (exponent == 0) return 1;
-    num res = 1;
-    for (int i = 0; i < exponent; i++) {
-      res *= x;
-    }
-    return res;
+    return digits * math.pow(10, _multiplier).toDouble();
   }
 
   String _formatResistance(double value) {
@@ -109,8 +95,10 @@ class _ResistorColorCodeScreenState extends State<ResistorColorCodeScreen> {
               children: [
                 _buildSelector("Band 1", _band1, _bandColors, (v) => setState(() => _band1 = v)),
                 _buildSelector("Band 2", _band2, _bandColors, (v) => setState(() => _band2 = v)),
-                _buildSelector("Multiplier", _multiplier, _bandColors, (v) => setState(() => _multiplier = v)),
-                _buildSelector("Tolerance", _toleranceIndex, _toleranceColors, (v) => setState(() => _toleranceIndex = v), names: _toleranceNames),
+                _buildSelector("Multiplier", _multiplier, _bandColors,
+                    (v) => setState(() => _multiplier = v)),
+                _buildSelector("Tolerance", _toleranceIndex, _toleranceColors,
+                    (v) => setState(() => _toleranceIndex = v)),
               ],
             ),
           ),
@@ -128,7 +116,8 @@ class _ResistorColorCodeScreenState extends State<ResistorColorCodeScreen> {
     );
   }
 
-  Widget _buildSelector(String label, int currentValue, List<Color> colors, Function(int) onChanged, {List<String>? names}) {
+  Widget _buildSelector(String label, int currentValue, List<Color> colors,
+      void Function(int) onChanged) {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
       child: Row(
