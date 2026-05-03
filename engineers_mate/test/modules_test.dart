@@ -1,6 +1,7 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:engineers_mate/core/data/civil_formulas.dart';
 import 'package:engineers_mate/core/data/mechanical_formulas.dart';
+import 'package:engineers_mate/core/data/electrical_formulas.dart';
 
 void main() {
   group('Civil Formulas', () {
@@ -29,6 +30,20 @@ void main() {
       // k=10, A=2, dT=50, d=0.1
       // Q = 10 * 2 * 50 / 0.1 = 1000 / 0.1 = 10000
       expect(f.calculate([10, 2, 50, 0.1]), 10000.0);
+    });
+  });
+
+  group('Electrical Formulas', () {
+    test('Ohm\'s Law (Find I)', () {
+      final f = electricalFormulas.firstWhere((e) => e.id == 'ohms_law_i');
+      // V=10, R=2 -> I=5
+      expect(f.calculate([10, 2]), 5.0);
+    });
+
+    test('Ohm\'s Law (Find I) - Divide by Zero', () {
+      final f = electricalFormulas.firstWhere((e) => e.id == 'ohms_law_i');
+      // V=10, R=0 -> I=Infinity
+      expect(f.calculate([10, 0]), double.infinity);
     });
   });
 }
