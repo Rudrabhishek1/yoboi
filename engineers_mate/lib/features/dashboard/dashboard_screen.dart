@@ -49,6 +49,7 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
             flexibleSpace: FlexibleSpaceBar(
               title: _isSearching
                 ? TextField(
+                    maxLength: 100,
                     controller: _searchController,
                     autofocus: true,
                     style: const TextStyle(color: Colors.white),
@@ -56,6 +57,7 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
                       hintText: "Search formulas...",
                       hintStyle: TextStyle(color: Colors.white70),
                       border: InputBorder.none,
+                      counterText: "",
                     ),
                     onChanged: _runSearch,
                   )
