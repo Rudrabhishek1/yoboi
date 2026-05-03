@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:google_mobile_ads/google_mobile_ads.dart';
 
 class AdBanner extends StatefulWidget {
   const AdBanner({super.key});
@@ -9,11 +8,7 @@ class AdBanner extends StatefulWidget {
 }
 
 class _AdBannerState extends State<AdBanner> {
-  BannerAd? _bannerAd;
   bool _isLoaded = false;
-
-  // Test Ad Unit ID for Android
-  final String _adUnitId = 'ca-app-pub-3940256099942544/6300978111';
 
   @override
   void initState() {
