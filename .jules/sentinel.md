@@ -1,0 +1,4 @@
+## 2024-05-04 - Input Length Limits to Prevent DOS
+**Vulnerability:** Text inputs for mathematical formulas and converters lacked `maxLength` restrictions, making them vulnerable to Denial of Service (DoS) or application crashes when excessively long strings are passed to parsers or state rebuilds.
+**Learning:** `math_expressions` parser and standard library parsing can become resource-heavy or fail when confronted with extremely long inputs. Additionally, UI input widgets can degrade performance with unchecked buffer sizes.
+**Prevention:** Always enforce reasonable `maxLength` limits on `TextField` inputs, and utilize `FilteringTextInputFormatter.allow()` to restrict characters to valid sets for numeric inputs (e.g., `RegExp(r"[0-9\.\-\+eE]")`), while cleaning up UI artifacts like character counters using `counterText: ""`.
