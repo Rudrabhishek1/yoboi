@@ -1,0 +1,3 @@
+## 2024-05-05 - Do not update lock files or unsupported syntaxes
+**Learning:** When optimizing flutter projects, changing `Colors.white.withOpacity(0.1)` to `Colors.white.withValues(alpha: 0.1)` might introduce syntaxes unsupported by older stable SDK versions (<= 3.24.x) resulting in compile errors. Furthermore, accidentally bumping lock files by running flutter commands using a prerelease Dart SDK can break environments.
+**Action:** Ensure the target Dart and Flutter versions support the new syntax before migrating `withOpacity` to `withValues`, and be careful not to commit unintended `pubspec.lock` changes.
