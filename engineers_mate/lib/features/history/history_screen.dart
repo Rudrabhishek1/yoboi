@@ -15,6 +15,7 @@ class HistoryScreen extends ConsumerWidget {
         actions: [
           IconButton(
             icon: const Icon(Icons.delete),
+            tooltip: 'Clear History',
             onPressed: () async {
                // Confirm dialog
                final confirm = await showDialog<bool>(
