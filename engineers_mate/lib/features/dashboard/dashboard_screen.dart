@@ -65,6 +65,7 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
             actions: [
                IconButton(
                  icon: Icon(_isSearching ? Icons.close : Icons.search),
+                 tooltip: _isSearching ? 'Close Search' : 'Search',
                  onPressed: () {
                    setState(() {
                      _isSearching = !_isSearching;
@@ -78,6 +79,7 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
                if (!_isSearching) ...[
                  IconButton(
                    icon: const Icon(Icons.add),
+                   tooltip: 'Create Formula',
                    onPressed: () {
                      Navigator.push(
                        context,
@@ -87,6 +89,7 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
                  ),
                  IconButton(
                    icon: const Icon(Icons.history),
+                   tooltip: 'View History',
                    onPressed: () {
                      Navigator.push(
                        context,
