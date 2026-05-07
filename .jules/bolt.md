@@ -1,0 +1,3 @@
+## 2024-05-14 - Optimize CustomPainter Backgrounds
+**Learning:** Rebuilding a complex `CustomPainter` that executes multiple `drawLine` commands on every frame causes significant CPU/GPU overhead when placed behind animating elements. Additionally, allocating `Paint` objects in the `paint()` method triggers unnecessary garbage collection cycles.
+**Action:** Always wrap static `CustomPaint` background widgets in a `RepaintBoundary`. Use `static final` fields for `Paint` objects and consolidate multiple line draws into a single, cached `Path` rendered via `drawPath()` to reduce Flutter engine crossings.
