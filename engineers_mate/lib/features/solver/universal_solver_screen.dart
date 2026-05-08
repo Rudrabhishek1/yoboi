@@ -9,7 +9,8 @@ class UniversalSolverScreen extends ConsumerStatefulWidget {
   const UniversalSolverScreen({super.key, required this.formula});
 
   @override
-  ConsumerState<UniversalSolverScreen> createState() => _UniversalSolverScreenState();
+  ConsumerState<UniversalSolverScreen> createState() =>
+      _UniversalSolverScreenState();
 }
 
 class _UniversalSolverScreenState extends ConsumerState<UniversalSolverScreen> {
@@ -52,9 +53,9 @@ class _UniversalSolverScreenState extends ConsumerState<UniversalSolverScreen> {
 
     // Save to history
     ref.read(historyProvider.notifier).addToHistory(
-      widget.formula.title,
-      "${_result!.toStringAsFixed(2)} ${widget.formula.resultUnit}",
-    );
+          widget.formula.title,
+          "${_result!.toStringAsFixed(2)} ${widget.formula.resultUnit}",
+        );
   }
 
   @override
@@ -74,7 +75,8 @@ class _UniversalSolverScreenState extends ConsumerState<UniversalSolverScreen> {
                 itemBuilder: (context, index) {
                   return TextField(
                     controller: _controllers[index],
-                    keyboardType: const TextInputType.numberWithOptions(decimal: true),
+                    keyboardType:
+                        const TextInputType.numberWithOptions(decimal: true),
                     decoration: InputDecoration(
                       labelText: widget.formula.inputLabels[index],
                       suffixText: widget.formula.inputUnits[index],

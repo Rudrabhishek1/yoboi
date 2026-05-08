@@ -3,7 +3,8 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:engineers_mate/features/electrical/resistor_color_code_screen.dart';
 
 void main() {
-  testWidgets('Resistor Color Code calculates correctly', (WidgetTester tester) async {
+  testWidgets('Resistor Color Code calculates correctly',
+      (WidgetTester tester) async {
     await tester.pumpWidget(const MaterialApp(home: ResistorColorCodeScreen()));
 
     // Initial State: Brown (1), Black (0), Red (x100) -> 10 * 100 = 1000 = 1.00 kΩ
@@ -29,9 +30,8 @@ void main() {
     // Let's try to tap the first color of Band 1 (Black, index 0).
     // The first ListView corresponds to Band 1.
     final band1Black = find.descendant(
-      of: find.widgetWithText(Row, "Band 1"),
-      matching: find.byType(GestureDetector).first
-    );
+        of: find.widgetWithText(Row, "Band 1"),
+        matching: find.byType(GestureDetector).first);
 
     await tester.tap(band1Black);
     await tester.pump();

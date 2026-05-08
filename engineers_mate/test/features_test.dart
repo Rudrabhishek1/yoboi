@@ -70,7 +70,8 @@ void main() {
     await tester.pumpAndSettle();
 
     // Should be in Solver
-    expect(find.text("Result"), findsNothing); // Solver screen has "Result" but only after calc.
+    expect(find.text("Result"),
+        findsNothing); // Solver screen has "Result" but only after calc.
     // Check title in AppBar
     expect(find.text("Ohm's Law (Find V)"), findsOneWidget);
   });

@@ -24,9 +24,12 @@ void main() {
     await tester.pumpAndSettle();
 
     // 2. Fill Form
-    await tester.enterText(find.widgetWithText(TextField, 'Formula Title'), 'Pythagoras');
-    await tester.enterText(find.widgetWithText(TextField, 'Variables (comma separated)'), 'a, b');
-    await tester.enterText(find.widgetWithText(TextField, 'Equation'), 'sqrt(a^2 + b^2)');
+    await tester.enterText(
+        find.widgetWithText(TextField, 'Formula Title'), 'Pythagoras');
+    await tester.enterText(
+        find.widgetWithText(TextField, 'Variables (comma separated)'), 'a, b');
+    await tester.enterText(
+        find.widgetWithText(TextField, 'Equation'), 'sqrt(a^2 + b^2)');
 
     // 3. Save
     await tester.tap(find.text('Save Formula'));
