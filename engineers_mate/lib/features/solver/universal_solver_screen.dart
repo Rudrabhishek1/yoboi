@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../models/formula.dart';
 import '../../core/providers/history_provider.dart';
@@ -75,10 +76,17 @@ class _UniversalSolverScreenState extends ConsumerState<UniversalSolverScreen> {
                   return TextField(
                     controller: _controllers[index],
                     keyboardType: const TextInputType.numberWithOptions(decimal: true),
+                    // Sentinel: Restrict input length to prevent potential denial of service
+                    maxLength: 50,
+                    // Sentinel: Restrict input format to only allow numbers, ensuring safe calculation later
+                    inputFormatters: [
+                      FilteringTextInputFormatter.allow(RegExp(r"[0-9\.\-\+eE]")),
+                    ],
                     decoration: InputDecoration(
                       labelText: widget.formula.inputLabels[index],
                       suffixText: widget.formula.inputUnits[index],
                       border: const OutlineInputBorder(),
+                      counterText: "",
                     ),
                   );
                 },

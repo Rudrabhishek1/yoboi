@@ -51,11 +51,14 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
                 ? TextField(
                     controller: _searchController,
                     autofocus: true,
+                    // Sentinel: Restrict input length to prevent potential denial of service
+                    maxLength: 100,
                     style: const TextStyle(color: Colors.white),
                     decoration: const InputDecoration(
                       hintText: "Search formulas...",
                       hintStyle: TextStyle(color: Colors.white70),
                       border: InputBorder.none,
+                      counterText: "",
                     ),
                     onChanged: _runSearch,
                   )
