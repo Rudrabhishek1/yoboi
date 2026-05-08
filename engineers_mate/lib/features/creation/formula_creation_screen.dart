@@ -66,17 +66,23 @@ class _FormulaCreationScreenState extends ConsumerState<FormulaCreationScreen> {
           children: [
             TextField(
               controller: _titleController,
-              decoration: const InputDecoration(labelText: "Formula Title", hintText: "e.g. My Kinetic Energy"),
+              // Sentinel: Restrict input length to prevent potential denial of service
+              maxLength: 50,
+              decoration: const InputDecoration(labelText: "Formula Title", hintText: "e.g. My Kinetic Energy", counterText: ""),
             ),
             const SizedBox(height: 16),
             TextField(
               controller: _variablesController,
-              decoration: const InputDecoration(labelText: "Variables (comma separated)", hintText: "m, v"),
+              // Sentinel: Restrict input length to prevent potential denial of service
+              maxLength: 100,
+              decoration: const InputDecoration(labelText: "Variables (comma separated)", hintText: "m, v", counterText: ""),
             ),
             const SizedBox(height: 16),
             TextField(
               controller: _expressionController,
-              decoration: const InputDecoration(labelText: "Equation", hintText: "0.5 * m * v^2"),
+              // Sentinel: Restrict input length to prevent potential denial of service
+              maxLength: 200,
+              decoration: const InputDecoration(labelText: "Equation", hintText: "0.5 * m * v^2", counterText: ""),
             ),
             const SizedBox(height: 24),
             SizedBox(
