@@ -1,7 +1,9 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-final favoritesProvider = AsyncNotifierProvider<FavoritesNotifier, List<String>>(FavoritesNotifier.new);
+final favoritesProvider =
+    AsyncNotifierProvider<FavoritesNotifier, List<String>>(
+        FavoritesNotifier.new);
 
 class FavoritesNotifier extends AsyncNotifier<List<String>> {
   static const String _key = 'favorite_formulas';
@@ -22,9 +24,9 @@ class FavoritesNotifier extends AsyncNotifier<List<String>> {
 
     List<String> newList;
     if (currentList.contains(formulaId)) {
-      newList = [ ...currentList ]..remove(formulaId);
+      newList = [...currentList]..remove(formulaId);
     } else {
-      newList = [ ...currentList, formulaId ];
+      newList = [...currentList, formulaId];
     }
 
     await prefs.setStringList(_key, newList);

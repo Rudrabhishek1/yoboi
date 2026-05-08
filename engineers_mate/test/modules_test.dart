@@ -25,7 +25,8 @@ void main() {
     });
 
     test('Heat Transfer', () {
-      final f = mechanicalFormulas.firstWhere((e) => e.id == 'heat_transfer_conduction');
+      final f = mechanicalFormulas
+          .firstWhere((e) => e.id == 'heat_transfer_conduction');
       // k=10, A=2, dT=50, d=0.1
       // Q = 10 * 2 * 50 / 0.1 = 1000 / 0.1 = 10000
       expect(f.calculate([10, 2, 50, 0.1]), 10000.0);

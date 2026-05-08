@@ -33,7 +33,9 @@ class HistoryItem {
 }
 
 // Provider
-final historyProvider = AsyncNotifierProvider<HistoryNotifier, List<HistoryItem>>(HistoryNotifier.new);
+final historyProvider =
+    AsyncNotifierProvider<HistoryNotifier, List<HistoryItem>>(
+        HistoryNotifier.new);
 
 class HistoryNotifier extends AsyncNotifier<List<HistoryItem>> {
   static const String _key = 'calculation_history';
@@ -65,7 +67,8 @@ class HistoryNotifier extends AsyncNotifier<List<HistoryItem>> {
       newList.removeRange(20, newList.length);
     }
 
-    final List<String> jsonList = newList.map((item) => jsonEncode(item.toMap())).toList();
+    final List<String> jsonList =
+        newList.map((item) => jsonEncode(item.toMap())).toList();
     await prefs.setStringList(_key, jsonList);
 
     state = AsyncData(newList);
