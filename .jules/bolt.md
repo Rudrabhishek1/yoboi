@@ -1,0 +1,3 @@
+## 2024-05-24 - Instance Caching in Rebuilt CustomPainters
+**Learning:** Adding instance variables (like paths or sizes) to cache calculations inside a `CustomPainter` (e.g., `GridPainter`) is completely ineffective if the parent widget instantiates a new painter object on every `build()` (e.g., `CustomPaint(painter: GridPainter())`). The cached variables are lost immediately.
+**Action:** When a static UI element like a background requires expensive path calculations, prioritize using `static final` fields for paints and wrap the `CustomPaint` widget in a `RepaintBoundary`. The `RepaintBoundary` caches the rendering layer, making internal painter instance caching unnecessary boilerplate.
