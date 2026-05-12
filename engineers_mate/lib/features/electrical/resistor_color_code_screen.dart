@@ -4,7 +4,8 @@ class ResistorColorCodeScreen extends StatefulWidget {
   const ResistorColorCodeScreen({super.key});
 
   @override
-  State<ResistorColorCodeScreen> createState() => _ResistorColorCodeScreenState();
+  State<ResistorColorCodeScreen> createState() =>
+      _ResistorColorCodeScreenState();
 }
 
 class _ResistorColorCodeScreenState extends State<ResistorColorCodeScreen> {
@@ -14,13 +15,16 @@ class _ResistorColorCodeScreenState extends State<ResistorColorCodeScreen> {
   // Tolerance: Brown(1%), Red(2%), Gold(5%), Silver(10%)
 
   final List<Color> _bandColors = [
-    Colors.black, Colors.brown, Colors.red, Colors.orange, Colors.yellow,
-    Colors.green, Colors.blue, Colors.purple, Colors.grey, Colors.white
-  ];
-
-  final List<String> _bandNames = [
-    "Black", "Brown", "Red", "Orange", "Yellow",
-    "Green", "Blue", "Violet", "Grey", "White"
+    Colors.black,
+    Colors.brown,
+    Colors.red,
+    Colors.orange,
+    Colors.yellow,
+    Colors.green,
+    Colors.blue,
+    Colors.purple,
+    Colors.grey,
+    Colors.white,
   ];
 
   int _band1 = 1; // Brown
@@ -28,8 +32,18 @@ class _ResistorColorCodeScreenState extends State<ResistorColorCodeScreen> {
   int _multiplier = 2; // Red (x100) -> 1k Ohm
   int _toleranceIndex = 2; // Gold
 
-  final List<Color> _toleranceColors = [Colors.brown, Colors.red, const Color(0xFFFFD700), const Color(0xFFC0C0C0)];
-  final List<String> _toleranceNames = ["Brown (1%)", "Red (2%)", "Gold (5%)", "Silver (10%)"];
+  final List<Color> _toleranceColors = [
+    Colors.brown,
+    Colors.red,
+    const Color(0xFFFFD700),
+    const Color(0xFFC0C0C0),
+  ];
+  final List<String> _toleranceNames = [
+    "Brown (1%)",
+    "Red (2%)",
+    "Gold (5%)",
+    "Silver (10%)",
+  ];
   final List<num> _toleranceValues = [1, 2, 5, 10];
 
   double get _resistance {
@@ -39,7 +53,7 @@ class _ResistorColorCodeScreenState extends State<ResistorColorCodeScreen> {
     // For simplicity, let's stick to the 10 basic colors for multiplier for now, or add Gold/Silver if needed.
     // Standard 4-band usually uses standard colors for multiplier.
     // let's assume standard colors for multiplier (0-9).
-    return digits *  _pow(10, _multiplier).toDouble();
+    return digits * _pow(10, _multiplier).toDouble();
   }
 
   num _pow(num x, num exponent) {
@@ -85,7 +99,10 @@ class _ResistorColorCodeScreenState extends State<ResistorColorCodeScreen> {
                     _buildBand(_bandColors[_band1]),
                     _buildBand(_bandColors[_band2]),
                     _buildBand(_bandColors[_multiplier]),
-                    _buildBand(_toleranceColors[_toleranceIndex], spacing: true),
+                    _buildBand(
+                      _toleranceColors[_toleranceIndex],
+                      spacing: true,
+                    ),
                   ],
                 ),
               ),
@@ -98,7 +115,9 @@ class _ResistorColorCodeScreenState extends State<ResistorColorCodeScreen> {
           ),
           Text(
             "±${_toleranceValues[_toleranceIndex]}%",
-            style: Theme.of(context).textTheme.headlineSmall?.copyWith(color: Colors.grey),
+            style: Theme.of(
+              context,
+            ).textTheme.headlineSmall?.copyWith(color: Colors.grey),
           ),
 
           const Divider(height: 40),
@@ -107,10 +126,31 @@ class _ResistorColorCodeScreenState extends State<ResistorColorCodeScreen> {
           Expanded(
             child: ListView(
               children: [
-                _buildSelector("Band 1", _band1, _bandColors, (v) => setState(() => _band1 = v)),
-                _buildSelector("Band 2", _band2, _bandColors, (v) => setState(() => _band2 = v)),
-                _buildSelector("Multiplier", _multiplier, _bandColors, (v) => setState(() => _multiplier = v)),
-                _buildSelector("Tolerance", _toleranceIndex, _toleranceColors, (v) => setState(() => _toleranceIndex = v), names: _toleranceNames),
+                _buildSelector(
+                  "Band 1",
+                  _band1,
+                  _bandColors,
+                  (v) => setState(() => _band1 = v),
+                ),
+                _buildSelector(
+                  "Band 2",
+                  _band2,
+                  _bandColors,
+                  (v) => setState(() => _band2 = v),
+                ),
+                _buildSelector(
+                  "Multiplier",
+                  _multiplier,
+                  _bandColors,
+                  (v) => setState(() => _multiplier = v),
+                ),
+                _buildSelector(
+                  "Tolerance",
+                  _toleranceIndex,
+                  _toleranceColors,
+                  (v) => setState(() => _toleranceIndex = v),
+                  names: _toleranceNames,
+                ),
               ],
             ),
           ),
@@ -128,12 +168,24 @@ class _ResistorColorCodeScreenState extends State<ResistorColorCodeScreen> {
     );
   }
 
-  Widget _buildSelector(String label, int currentValue, List<Color> colors, Function(int) onChanged, {List<String>? names}) {
+  Widget _buildSelector(
+    String label,
+    int currentValue,
+    List<Color> colors,
+    Function(int) onChanged, {
+    List<String>? names,
+  }) {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
       child: Row(
         children: [
-          SizedBox(width: 80, child: Text(label, style: const TextStyle(fontWeight: FontWeight.bold))),
+          SizedBox(
+            width: 80,
+            child: Text(
+              label,
+              style: const TextStyle(fontWeight: FontWeight.bold),
+            ),
+          ),
           Expanded(
             child: SizedBox(
               height: 50,
@@ -149,10 +201,18 @@ class _ResistorColorCodeScreenState extends State<ResistorColorCodeScreen> {
                       margin: const EdgeInsets.symmetric(horizontal: 4),
                       decoration: BoxDecoration(
                         color: colors[index],
-                        border: isSelected ? Border.all(color: Colors.black, width: 3) : Border.all(color: Colors.grey),
+                        border: isSelected
+                            ? Border.all(color: Colors.black, width: 3)
+                            : Border.all(color: Colors.grey),
                         shape: BoxShape.circle,
                       ),
-                      child: isSelected ? const Icon(Icons.check, color: Colors.white, size: 20) : null,
+                      child: isSelected
+                          ? const Icon(
+                              Icons.check,
+                              color: Colors.white,
+                              size: 20,
+                            )
+                          : null,
                     ),
                   );
                 },
