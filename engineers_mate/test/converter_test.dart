@@ -39,4 +39,27 @@ void main() {
     // 1 kg = 1000 g
     expect(find.text('1000.0000'), findsOneWidget);
   });
+
+  testWidgets('Quick Convert switches to Temperature category correctly', (WidgetTester tester) async {
+    await tester.pumpWidget(const MaterialApp(home: QuickConvertScreen()));
+
+    // Wait for initial frame setup
+    await tester.pumpAndSettle();
+
+    // Tap Temperature
+    await tester.tap(find.text('Temperature'));
+    await tester.pumpAndSettle();
+
+    // Default Temperature is Celsius -> Fahrenheit.
+    // _units[2] = [TEMPERATURE.celsius, TEMPERATURE.fahrenheit, TEMPERATURE.kelvin]
+    // _fromUnit = TEMPERATURE.celsius, _toUnit = TEMPERATURE.fahrenheit
+    // The codebase uses 2 decimal places for Temperature: toStringAsFixed(2)
+    // 1 C = 33.80 F
+    expect(find.text('33.80'), findsOneWidget);
+
+    // Verify UI dropdowns have been updated with Temperature specific units
+    // In Dart enums, unit.name returns the string name of the enum value.
+    expect(find.text('celsius'), findsWidgets);
+    expect(find.text('fahrenheit'), findsWidgets);
+  });
 }
