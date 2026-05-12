@@ -1,0 +1,4 @@
+## 2024-05-24 - Missing Input Validation in Formula Variables
+**Vulnerability:** The app allowed users to input malformed variable names when creating custom formulas. These names were passed directly to the expression parser, potentially leading to errors, crashes, or unpredictable parsing behavior when the parser tried to evaluate expressions with those malformed variables.
+**Learning:** External or user-provided input, especially data that is later used in logical parsing or execution engines (like `math_expressions`), must be strictly validated against an allowed schema or format before processing.
+**Prevention:** Always implement robust input validation. For variable names in mathematical contexts, use strict regular expressions like `^[a-zA-Z][a-zA-Z0-9]*$` to enforce that variables start with a letter and contain only alphanumeric characters. Provide immediate user feedback when validation fails.
