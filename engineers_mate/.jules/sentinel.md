@@ -1,0 +1,4 @@
+## 2024-05-12 - Prevent ReDoS and Unsafe Dynamic Evaluation in Math Parsers
+**Vulnerability:** Allowing arbitrary user input directly into a mathematical expression parser (`math_expressions`) without length or complexity bounds creates a Denial of Service (DoS/ReDoS) vector, and uncaught exceptions can crash the application.
+**Learning:** Mathematical expression parsers are susceptible to resource exhaustion if evaluating excessively long strings. Furthermore, evaluating user inputs can yield non-finite numbers (`double.nan` or `double.infinity`) which crash UI layers relying on formatting like `toStringAsFixed()`.
+**Prevention:** Always enforce a strict maximum length (e.g., 255 characters) on expressions before parsing them. Wrap parsing and evaluation in a `try/catch` block, and ensure the resulting float/double is finite (`result.isFinite`) before passing it back to the UI. Ensure validations are duplicated on both the data layer and the UI input layer.
