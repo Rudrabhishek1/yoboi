@@ -1,8 +1,41 @@
 import 'package:flutter_test/flutter_test.dart';
+import 'package:firebase_core_platform_interface/firebase_core_platform_interface.dart';
 import 'package:engineers_mate/core/services/firebase_service.dart';
 import 'package:engineers_mate/core/providers/custom_formulas_provider.dart';
 
+class MockFirebasePlatformError extends FirebasePlatform {
+  @override
+  FirebaseAppPlatform app([String name = defaultFirebaseAppName]) {
+    throw Exception('Mocked app not found');
+  }
+
+  @override
+  Future<FirebaseAppPlatform> initializeApp({
+    String? name,
+    FirebaseOptions? options,
+  }) async {
+    throw Exception('Simulated Firebase Initialization Error');
+  }
+}
+
 void main() {
+  test('FirebaseService initialize gracefully catches Firebase initialization errors via Mock', () async {
+    TestWidgetsFlutterBinding.ensureInitialized();
+    final original = FirebasePlatform.instance;
+    addTearDown(() {
+      FirebasePlatform.instance = original;
+    });
+
+    FirebasePlatform.instance = MockFirebasePlatformError();
+
+    // Call initialize, it should catch the exception silently
+    await FirebaseService.initialize();
+
+    // Trying to fetch data should return empty list since it failed to initialize
+    final list = await FirebaseService.fetchRemoteFormulas();
+    expect(list, isEmpty);
+  });
+
   test('FirebaseService fails gracefully without keys', () async {
     // This verifies our try-catch block works
     // In this test env, there is no google-services.json, so it should print error and not crash.
