@@ -41,7 +41,8 @@ class CustomFormulaData {
       title: title,
       category: 'Custom',
       inputLabels: inputLabels,
-      inputUnits: List.filled(inputLabels.length, ''), // No units for custom yet
+      inputUnits:
+          List.filled(inputLabels.length, ''), // No units for custom yet
       resultUnit: '',
       calculate: (inputs) {
         Parser p = Parser();
@@ -56,26 +57,33 @@ class CustomFormulaData {
   }
 }
 
-final customFormulasProvider = AsyncNotifierProvider<CustomFormulasNotifier, List<CustomFormulaData>>(CustomFormulasNotifier.new);
+final customFormulasProvider =
+    AsyncNotifierProvider<CustomFormulasNotifier, List<CustomFormulaData>>(
+        CustomFormulasNotifier.new);
 
 class CustomFormulasNotifier extends AsyncNotifier<List<CustomFormulaData>> {
   static const String _key = 'custom_formulas';
+  // ⚡ Bolt: Caching SharedPreferences instance avoids asynchronous microtask overhead of repeated getInstance() calls
+  late final SharedPreferences _prefs;
 
   @override
   Future<List<CustomFormulaData>> build() async {
-    final prefs = await SharedPreferences.getInstance();
-    final List<String>? jsonList = prefs.getStringList(_key);
+    _prefs = await SharedPreferences.getInstance();
+    final List<String>? jsonList = _prefs.getStringList(_key);
     if (jsonList == null) return [];
-    return jsonList.map((str) => CustomFormulaData.fromMap(jsonDecode(str))).toList();
+    return jsonList
+        .map((str) => CustomFormulaData.fromMap(jsonDecode(str)))
+        .toList();
   }
 
   Future<void> addFormula(CustomFormulaData data) async {
-    final prefs = await SharedPreferences.getInstance();
+    if (state is! AsyncData) await future;
     final currentList = state.value ?? [];
     final newList = [...currentList, data];
 
-    final List<String> jsonList = newList.map((item) => jsonEncode(item.toMap())).toList();
-    await prefs.setStringList(_key, jsonList);
+    final List<String> jsonList =
+        newList.map((item) => jsonEncode(item.toMap())).toList();
+    await _prefs.setStringList(_key, jsonList);
 
     state = AsyncData(newList);
   }
