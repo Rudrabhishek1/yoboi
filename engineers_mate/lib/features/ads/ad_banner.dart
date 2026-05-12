@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+
+// ignore: unused_import
 import 'package:google_mobile_ads/google_mobile_ads.dart';
 
 class AdBanner extends StatefulWidget {
@@ -9,11 +11,7 @@ class AdBanner extends StatefulWidget {
 }
 
 class _AdBannerState extends State<AdBanner> {
-  BannerAd? _bannerAd;
   bool _isLoaded = false;
-
-  // Test Ad Unit ID for Android
-  final String _adUnitId = 'ca-app-pub-3940256099942544/6300978111';
 
   @override
   void initState() {
@@ -51,14 +49,14 @@ class _AdBannerState extends State<AdBanner> {
   @override
   Widget build(BuildContext context) {
     if (_isLoaded) {
-       // Mock Ad Banner
-       return Container(
-         alignment: Alignment.center,
-         width: double.infinity,
-         height: 50,
-         color: Colors.grey[300],
-         child: const Text("AdMob Banner Placeholder"),
-       );
+      // Mock Ad Banner
+      return Container(
+        alignment: Alignment.center,
+        width: double.infinity,
+        height: 50,
+        color: Colors.grey[300],
+        child: const Text("AdMob Banner Placeholder"),
+      );
     }
     return const SizedBox.shrink();
   }
