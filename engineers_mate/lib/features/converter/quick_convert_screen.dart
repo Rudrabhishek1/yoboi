@@ -37,7 +37,9 @@ class _QuickConvertScreenState extends State<QuickConvertScreen> {
     _toUnit = _units[0]![1];
     // Defer conversion to build frame or ensure it runs once
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      _convert();
+      setState(() {
+        _convert();
+      });
     });
   }
 
@@ -67,7 +69,7 @@ class _QuickConvertScreenState extends State<QuickConvertScreen> {
       var input = _inputValue.convertFromTo(_fromUnit as TEMPERATURE, _toUnit as TEMPERATURE);
       _result = input?.toStringAsFixed(2) ?? "Error";
     }
-    setState(() {});
+    // ⚡ Bolt: Removed redundant setState(() {}) to batch state changes since caller wraps in setState
   }
 
   @override
