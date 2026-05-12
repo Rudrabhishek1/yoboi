@@ -27,6 +27,11 @@ class _FormulaCreationScreenState extends ConsumerState<FormulaCreationScreen> {
 
     final variables = variablesStr.split(',').map((e) => e.trim()).toList();
 
+    if (expression.length > 255) {
+      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("Expression is too long (max 255 chars)")));
+      return;
+    }
+
     // Validate Expression
     try {
       Parser p = Parser();
