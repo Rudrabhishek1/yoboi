@@ -35,10 +35,8 @@ class _QuickConvertScreenState extends State<QuickConvertScreen> {
     _selectedCategoryIndex = 0;
     _fromUnit = _units[0]![0];
     _toUnit = _units[0]![1];
-    // Defer conversion to build frame or ensure it runs once
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      _convert();
-    });
+    // Compute initial result synchronously before first frame
+    _convert();
   }
 
   void _updateUnitsForCategory(int index) {
@@ -67,7 +65,6 @@ class _QuickConvertScreenState extends State<QuickConvertScreen> {
       var input = _inputValue.convertFromTo(_fromUnit as TEMPERATURE, _toUnit as TEMPERATURE);
       _result = input?.toStringAsFixed(2) ?? "Error";
     }
-    setState(() {});
   }
 
   @override
