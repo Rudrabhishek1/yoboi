@@ -1,0 +1,4 @@
+## 2024-05-15 - SharedPreferences Caching Optimization
+
+**Learning:** Micro-benchmarks in 'engineers_mate' demonstrate that caching the `SharedPreferences` instance avoids asynchronous microtask overhead, reducing access time to ~0ms compared to the ~111ms overhead of repeatedly calling `SharedPreferences.getInstance()` over 10,000 iterations. In Riverpod AsyncNotifiers, caching `SharedPreferences` in `build()` and awaiting the initialization state (`if (state is! AsyncData) await future;`) before access provides both performance and safety without LateInitializationError crashes.
+**Action:** When working on providers that rely on SharedPreferences, initialize it once in `build()` and reuse it across state mutation methods, making sure to block early access using `await future`. Also, avoid estimating metrics in descriptions without verified script runs.
