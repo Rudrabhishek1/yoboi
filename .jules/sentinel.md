@@ -1,0 +1,4 @@
+## 2024-05-12 - Formula Variable Input Validation
+**Vulnerability:** Missing input validation on user-defined formula variables in `FormulaCreationScreen`.
+**Learning:** `math_expressions` package does not strictly enforce variable naming conventions. If a variable is named "1+1", it can cause unexpected behavior or crashes during expression parsing or evaluation, or even execution of unintended operations. In `engineers_mate`, user-defined formula variables must be validated using `RegExp(r'^[a-zA-Z][a-zA-Z0-9]*$')` to ensure they start with a letter and contain only alphanumeric characters before being parsed by `math_expressions`.
+**Prevention:** Always validate user-provided identifiers (like variable names) against a strict allowlist regex (e.g., alphanumeric starting with a letter) before passing them to math parsers.
