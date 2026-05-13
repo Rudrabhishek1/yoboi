@@ -7,13 +7,15 @@ class FormulaCreationScreen extends ConsumerStatefulWidget {
   const FormulaCreationScreen({super.key});
 
   @override
-  ConsumerState<FormulaCreationScreen> createState() => _FormulaCreationScreenState();
+  ConsumerState<FormulaCreationScreen> createState() =>
+      _FormulaCreationScreenState();
 }
 
 class _FormulaCreationScreenState extends ConsumerState<FormulaCreationScreen> {
   final _titleController = TextEditingController();
   final _expressionController = TextEditingController();
-  final _variablesController = TextEditingController(); // Comma separated for now
+  final _variablesController =
+      TextEditingController(); // Comma separated for now
 
   void _save() async {
     final title = _titleController.text;
@@ -21,11 +23,28 @@ class _FormulaCreationScreenState extends ConsumerState<FormulaCreationScreen> {
     final variablesStr = _variablesController.text;
 
     if (title.isEmpty || expression.isEmpty || variablesStr.isEmpty) {
-      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("Please fill all fields")));
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(const SnackBar(content: Text("Please fill all fields")));
       return;
     }
 
     final variables = variablesStr.split(',').map((e) => e.trim()).toList();
+
+    // 🛡️ Sentinel: Validate variable names to prevent math_expressions parser issues / injection
+    final validVarRegex = RegExp(r'^[a-zA-Z][a-zA-Z0-9]*$');
+    for (var v in variables) {
+      if (!validVarRegex.hasMatch(v)) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(
+              "Invalid variable name: '$v'. Must start with a letter and contain only alphanumeric characters.",
+            ),
+          ),
+        );
+        return;
+      }
+    }
 
     // Validate Expression
     try {
@@ -38,7 +57,9 @@ class _FormulaCreationScreenState extends ConsumerState<FormulaCreationScreen> {
       }
       exp.evaluate(EvaluationType.REAL, cm);
     } catch (e) {
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("Invalid Expression: $e")));
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text("Invalid Expression: $e")));
       return;
     }
 
@@ -66,17 +87,26 @@ class _FormulaCreationScreenState extends ConsumerState<FormulaCreationScreen> {
           children: [
             TextField(
               controller: _titleController,
-              decoration: const InputDecoration(labelText: "Formula Title", hintText: "e.g. My Kinetic Energy"),
+              decoration: const InputDecoration(
+                labelText: "Formula Title",
+                hintText: "e.g. My Kinetic Energy",
+              ),
             ),
             const SizedBox(height: 16),
             TextField(
               controller: _variablesController,
-              decoration: const InputDecoration(labelText: "Variables (comma separated)", hintText: "m, v"),
+              decoration: const InputDecoration(
+                labelText: "Variables (comma separated)",
+                hintText: "m, v",
+              ),
             ),
             const SizedBox(height: 16),
             TextField(
               controller: _expressionController,
-              decoration: const InputDecoration(labelText: "Equation", hintText: "0.5 * m * v^2"),
+              decoration: const InputDecoration(
+                labelText: "Equation",
+                hintText: "0.5 * m * v^2",
+              ),
             ),
             const SizedBox(height: 24),
             SizedBox(
