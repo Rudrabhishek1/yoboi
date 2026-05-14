@@ -1,0 +1,4 @@
+## 2025-05-14 - Fix Insecure Deserialization in Remote Config parsing
+**Vulnerability:** The application was vulnerable to runtime crashes (TypeError) due to blind deserialization of RemoteConfig and SharedPreferences JSON payloads without validating their structure or field types.
+**Learning:** External data from Firebase RemoteConfig or SharedPreferences can be maliciously altered, malformed, or poisoned. Blindly casting nested dynamic structures like `List<String>.from(map['inputLabels'])` without explicit null and type checking leads to application crashes.
+**Prevention:** Always sanitize and type-check external data payloads (e.g., verifying `jsonDecode(payload) is List` and using `.whereType<Map<String, dynamic>>()`) before mapping. Harden factory constructors like `fromMap` by using explicit safe conversion operators (e.g., `?.toString() ?? ''` and null-aware map operators for collections) to ensure fallback defaults.
