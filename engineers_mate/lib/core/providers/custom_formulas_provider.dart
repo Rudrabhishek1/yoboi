@@ -27,11 +27,12 @@ class CustomFormulaData {
   }
 
   factory CustomFormulaData.fromMap(Map<String, dynamic> map) {
+    // 🛡️ Sentinel: Harden deserialization to prevent crashes from malformed data
     return CustomFormulaData(
-      id: map['id'],
-      title: map['title'],
-      inputLabels: List<String>.from(map['inputLabels']),
-      expression: map['expression'],
+      id: map['id']?.toString() ?? '',
+      title: map['title']?.toString() ?? '',
+      inputLabels: (map['inputLabels'] as List<dynamic>?)?.map((e) => e.toString()).toList() ?? [],
+      expression: map['expression']?.toString() ?? '',
     );
   }
 
