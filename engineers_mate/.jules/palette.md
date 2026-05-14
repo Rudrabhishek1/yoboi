@@ -1,0 +1,3 @@
+## 2024-05-14 - Missing Tooltips on IconButtons
+**Learning:** Found a widespread pattern in this app's components where `IconButton` widgets lacked the `tooltip` property. In Flutter, `tooltip` not only provides a visual hover label but also serves as the ARIA-equivalent accessibility label for screen readers. Icon-only buttons without tooltips are completely opaque to screen readers.
+**Action:** Always add explicit `tooltip` strings to `IconButton` widgets, especially when they don't have accompanying text labels, to ensure keyboard and screen reader accessibility.
