@@ -24,13 +24,20 @@ class GridPainter extends CustomPainter {
 
     const double step = 20.0;
 
+    // ⚡ Bolt: Batching grid lines into a single Path reduces Canvas drawing overhead
+    final path = Path();
+
     for (double x = 0; x < size.width; x += step) {
-      canvas.drawLine(Offset(x, 0), Offset(x, size.height), paint);
+      path.moveTo(x, 0);
+      path.lineTo(x, size.height);
     }
 
     for (double y = 0; y < size.height; y += step) {
-      canvas.drawLine(Offset(0, y), Offset(size.width, y), paint);
+      path.moveTo(0, y);
+      path.lineTo(size.width, y);
     }
+
+    canvas.drawPath(path, paint);
 
     // Draw some random "Technical" circles/lines
     final strongPaint = Paint()
