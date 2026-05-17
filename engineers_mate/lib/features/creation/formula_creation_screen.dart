@@ -27,6 +27,17 @@ class _FormulaCreationScreenState extends ConsumerState<FormulaCreationScreen> {
 
     final variables = variablesStr.split(',').map((e) => e.trim()).toList();
 
+    // 🛡️ Sentinel: Validate variable names to prevent expression injection and parsing errors
+    final validVariableRegExp = RegExp(r'^[a-zA-Z][a-zA-Z0-9]*$');
+    for (var v in variables) {
+      if (v.isNotEmpty && !validVariableRegExp.hasMatch(v)) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text("Invalid variable name: $v. Must start with a letter and contain only alphanumeric characters.")),
+        );
+        return;
+      }
+    }
+
     // Validate Expression
     try {
       Parser p = Parser();

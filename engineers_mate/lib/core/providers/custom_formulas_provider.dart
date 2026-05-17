@@ -27,11 +27,17 @@ class CustomFormulaData {
   }
 
   factory CustomFormulaData.fromMap(Map<String, dynamic> map) {
+    // 🛡️ Sentinel: Harden mapping of external data to prevent type errors
+    final rawInputLabels = map['inputLabels'];
+    final labelsList = rawInputLabels is List
+        ? rawInputLabels.map((e) => e?.toString() ?? '').toList()
+        : <String>[];
+
     return CustomFormulaData(
-      id: map['id'],
-      title: map['title'],
-      inputLabels: List<String>.from(map['inputLabels']),
-      expression: map['expression'],
+      id: map['id']?.toString() ?? '',
+      title: map['title']?.toString() ?? '',
+      inputLabels: labelsList,
+      expression: map['expression']?.toString() ?? '',
     );
   }
 
