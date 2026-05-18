@@ -27,11 +27,15 @@ class CustomFormulaData {
   }
 
   factory CustomFormulaData.fromMap(Map<String, dynamic> map) {
+    // 🛡️ Sentinel: Safe type conversions to prevent type-casting errors from malicious/malformed JSON
+    final rawLabels = map['inputLabels'];
+    final safeLabels = rawLabels is Iterable ? rawLabels.map((e) => e.toString()).toList() : <String>[];
+
     return CustomFormulaData(
-      id: map['id'],
-      title: map['title'],
-      inputLabels: List<String>.from(map['inputLabels']),
-      expression: map['expression'],
+      id: map['id']?.toString() ?? '',
+      title: map['title']?.toString() ?? '',
+      inputLabels: safeLabels,
+      expression: map['expression']?.toString() ?? '',
     );
   }
 
