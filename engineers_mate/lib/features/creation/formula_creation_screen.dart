@@ -25,7 +25,21 @@ class _FormulaCreationScreenState extends ConsumerState<FormulaCreationScreen> {
       return;
     }
 
-    final variables = variablesStr.split(',').map((e) => e.trim()).toList();
+    final variables = variablesStr.split(',')
+        .map((e) => e.trim())
+        .where((e) => e.isNotEmpty)
+        .toList();
+
+    // 🛡️ Sentinel: Validate variable names to prevent injection/parsing errors
+    final validVarRegex = RegExp(r'^[a-zA-Z][a-zA-Z0-9]*$');
+    for (var v in variables) {
+      if (!validVarRegex.hasMatch(v)) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text("Invalid variable name: '$v'. Must start with a letter and contain only alphanumeric characters.")),
+        );
+        return;
+      }
+    }
 
     // Validate Expression
     try {
