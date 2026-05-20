@@ -1,0 +1,4 @@
+## 2024-05-20 - Insecure Deserialization in Firebase Remote Config
+**Vulnerability:** In `FirebaseService.fetchRemoteFormulas`, remote JSON payloads were unconditionally cast and parsed using `List<dynamic>` and mapped without verifying elements were maps. In `CustomFormulaData.fromMap`, properties were retrieved dynamically without type checking or null safety handling. Malformed remote configuration payloads could lead to `TypeError` or null reference crashes.
+**Learning:** `jsonDecode` outputs `dynamic`, and trusting that the root is a `List` or that items are `Map<String, dynamic>` without checking can crash the application. Dart's `dynamic` type checking does not happen statically.
+**Prevention:** Always verify the root structure of decoded JSON (e.g., `is List`). Filter elements with `.whereType<Map<String, dynamic>>()` before mapping. Use safe type-casting and defaults (e.g., `?.toString() ?? ''` and `is List`) in model factory constructors like `fromMap`.
