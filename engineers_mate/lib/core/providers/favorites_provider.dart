@@ -5,19 +5,16 @@ final favoritesProvider = AsyncNotifierProvider<FavoritesNotifier, List<String>>
 
 class FavoritesNotifier extends AsyncNotifier<List<String>> {
   static const String _key = 'favorite_formulas';
+  late final SharedPreferences _prefs; // ⚡ Bolt: Cache SharedPreferences to avoid microtask overhead
 
   @override
   Future<List<String>> build() async {
-    return _loadFavorites();
-  }
-
-  Future<List<String>> _loadFavorites() async {
-    final prefs = await SharedPreferences.getInstance();
-    return prefs.getStringList(_key) ?? [];
+    _prefs = await SharedPreferences.getInstance();
+    return _prefs.getStringList(_key) ?? [];
   }
 
   Future<void> toggleFavorite(String formulaId) async {
-    final prefs = await SharedPreferences.getInstance();
+    if (state is! AsyncData) await future;
     final currentList = state.value ?? [];
 
     List<String> newList;
@@ -27,7 +24,7 @@ class FavoritesNotifier extends AsyncNotifier<List<String>> {
       newList = [ ...currentList, formulaId ];
     }
 
-    await prefs.setStringList(_key, newList);
+    await _prefs.setStringList(_key, newList);
     state = AsyncData(newList);
   }
 }
