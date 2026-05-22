@@ -9,11 +9,7 @@ void main() async {
   // Initialize Firebase (safely)
   await FirebaseService.initialize();
 
-  runApp(
-    const ProviderScope(
-      child: EngineersMateApp(),
-    ),
-  );
+  runApp(const ProviderScope(child: EngineersMateApp()));
 }
 
 class EngineersMateApp extends StatelessWidget {

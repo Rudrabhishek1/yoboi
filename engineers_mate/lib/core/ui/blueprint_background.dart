@@ -7,9 +7,7 @@ class BlueprintBackground extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       color: const Color(0xFF003366), // Deep Engineering Blue
-      child: CustomPaint(
-        painter: GridPainter(),
-      ),
+      child: CustomPaint(painter: GridPainter()),
     );
   }
 }
@@ -38,7 +36,11 @@ class GridPainter extends CustomPainter {
       ..style = PaintingStyle.stroke
       ..strokeWidth = 2.0;
 
-    canvas.drawCircle(Offset(size.width * 0.8, size.height * 0.5), 50, strongPaint);
+    canvas.drawCircle(
+      Offset(size.width * 0.8, size.height * 0.5),
+      50,
+      strongPaint,
+    );
     canvas.drawRect(Rect.fromLTWH(20, size.height * 0.6, 60, 40), strongPaint);
   }
 

@@ -16,18 +16,18 @@ void main() {
   // Since we can't easily mock FirebaseRemoteConfig static instance without a heavy mock library,
   // We will verify the parsing logic by creating a dummy JSON and parsing it using the model directly.
   test('CustomFormulaData parses from JSON', () {
-     final jsonMap = {
-       "id": "remote_1",
-       "title": "Remote Formula",
-       "inputLabels": ["x", "y"],
-       "expression": "x + y"
-     };
+    final jsonMap = {
+      "id": "remote_1",
+      "title": "Remote Formula",
+      "inputLabels": ["x", "y"],
+      "expression": "x + y",
+    };
 
-     final data = CustomFormulaData.fromMap(jsonMap);
-     expect(data.title, "Remote Formula");
-     expect(data.inputLabels, ["x", "y"]);
+    final data = CustomFormulaData.fromMap(jsonMap);
+    expect(data.title, "Remote Formula");
+    expect(data.inputLabels, ["x", "y"]);
 
-     final formula = data.toFormula();
-     expect(formula.calculate([10, 5]), 15.0);
+    final formula = data.toFormula();
+    expect(formula.calculate([10, 5]), 15.0);
   });
 }

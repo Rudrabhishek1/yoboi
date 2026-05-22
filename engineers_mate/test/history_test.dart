@@ -6,14 +6,14 @@ import 'package:engineers_mate/features/history/history_screen.dart';
 import 'package:engineers_mate/core/providers/history_provider.dart';
 
 void main() {
-  testWidgets('History Screen displays empty state', (WidgetTester tester) async {
+  testWidgets('History Screen displays empty state', (
+    WidgetTester tester,
+  ) async {
     // Mock SharedPrefs
     SharedPreferences.setMockInitialValues({});
 
     await tester.pumpWidget(
-      const ProviderScope(
-        child: MaterialApp(home: HistoryScreen()),
-      ),
+      const ProviderScope(child: MaterialApp(home: HistoryScreen())),
     );
     await tester.pump(); // Provider initialization
 
@@ -28,7 +28,9 @@ void main() {
     // Initial load
     await container.read(historyProvider.future);
 
-    await container.read(historyProvider.notifier).addToHistory("Test Formula", "42.00 m");
+    await container
+        .read(historyProvider.notifier)
+        .addToHistory("Test Formula", "42.00 m");
 
     final history = await container.read(historyProvider.future);
     expect(history.length, 1);
