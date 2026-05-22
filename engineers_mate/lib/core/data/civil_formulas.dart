@@ -14,7 +14,12 @@ final List<Formula> civilFormulas = [
     id: 'bricks_estimator',
     title: 'Brick Wall Estimator',
     category: 'Civil',
-    inputLabels: ['Wall Length (m)', 'Wall Height (m)', 'Brick Length (mm)', 'Brick Height (mm)'],
+    inputLabels: [
+      'Wall Length (m)',
+      'Wall Height (m)',
+      'Brick Length (mm)',
+      'Brick Height (mm)',
+    ],
     inputUnits: ['m', 'm', 'mm', 'mm'],
     resultUnit: 'bricks',
     calculate: (inputs) {

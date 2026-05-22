@@ -14,9 +14,7 @@ void main() {
     tester.view.devicePixelRatio = 1.0;
 
     await tester.pumpWidget(
-      const ProviderScope(
-        child: MaterialApp(home: DashboardScreen())
-      )
+      const ProviderScope(child: MaterialApp(home: DashboardScreen())),
     );
 
     expect(find.text('Electrical'), findsOneWidget);
@@ -28,11 +26,11 @@ void main() {
     addTearDown(tester.view.resetDevicePixelRatio);
   });
 
-  testWidgets('Clicking Electrical opens Formula List', (WidgetTester tester) async {
+  testWidgets('Clicking Electrical opens Formula List', (
+    WidgetTester tester,
+  ) async {
     await tester.pumpWidget(
-      const ProviderScope(
-        child: MaterialApp(home: DashboardScreen())
-      )
+      const ProviderScope(child: MaterialApp(home: DashboardScreen())),
     );
 
     await tester.tap(find.text('Electrical'));
@@ -42,7 +40,9 @@ void main() {
     expect(find.text('Ohm\'s Law (Find V)'), findsOneWidget);
   });
 
-  testWidgets('Universal Solver calculates correctly', (WidgetTester tester) async {
+  testWidgets('Universal Solver calculates correctly', (
+    WidgetTester tester,
+  ) async {
     final formula = Formula(
       id: 'test',
       title: 'Test Formula',
@@ -55,8 +55,8 @@ void main() {
 
     await tester.pumpWidget(
       ProviderScope(
-        child: MaterialApp(home: UniversalSolverScreen(formula: formula))
-      )
+        child: MaterialApp(home: UniversalSolverScreen(formula: formula)),
+      ),
     );
 
     // Enter values
@@ -72,8 +72,8 @@ void main() {
   });
 
   testWidgets('Ohm\'s Law Logic Test', (WidgetTester tester) async {
-     final formula = electricalFormulas.firstWhere((f) => f.id == 'ohms_law_v');
+    final formula = electricalFormulas.firstWhere((f) => f.id == 'ohms_law_v');
 
-     expect(formula.calculate([2.0, 10.0]), 20.0); // V = I * R = 2 * 10 = 20
+    expect(formula.calculate([2.0, 10.0]), 20.0); // V = I * R = 2 * 10 = 20
   });
 }

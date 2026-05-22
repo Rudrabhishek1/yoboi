@@ -3,7 +3,9 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:engineers_mate/features/converter/quick_convert_screen.dart';
 
 void main() {
-  testWidgets('Quick Convert Screen renders and converts Length', (WidgetTester tester) async {
+  testWidgets('Quick Convert Screen renders and converts Length', (
+    WidgetTester tester,
+  ) async {
     await tester.pumpWidget(const MaterialApp(home: QuickConvertScreen()));
 
     // Check initial state (Length selected by default)

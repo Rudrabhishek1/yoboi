@@ -19,6 +19,8 @@ class Formula {
     required this.resultUnit,
     required this.calculate,
     this.isPro = false,
-  }) : assert(inputLabels.length == inputUnits.length,
-            'Labels and Units must have same length');
+  }) : assert(
+         inputLabels.length == inputUnits.length,
+         'Labels and Units must have same length',
+       );
 }
