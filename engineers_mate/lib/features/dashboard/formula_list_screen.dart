@@ -51,6 +51,7 @@ class FormulaListScreen extends ConsumerWidget {
             return ListTile(
             title: Text(formula.title),
             leading: IconButton(
+              tooltip: isFav ? 'Remove from favorites' : 'Add to favorites',
               icon: Icon(isFav ? Icons.star : Icons.star_border, color: isFav ? Colors.amber : null),
               onPressed: () {
                 ref.read(favoritesProvider.notifier).toggleFavorite(formula.id);
