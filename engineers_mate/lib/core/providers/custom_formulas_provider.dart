@@ -60,22 +60,24 @@ final customFormulasProvider = AsyncNotifierProvider<CustomFormulasNotifier, Lis
 
 class CustomFormulasNotifier extends AsyncNotifier<List<CustomFormulaData>> {
   static const String _key = 'custom_formulas';
+  late final SharedPreferences _prefs;
 
   @override
   Future<List<CustomFormulaData>> build() async {
-    final prefs = await SharedPreferences.getInstance();
-    final List<String>? jsonList = prefs.getStringList(_key);
+    _prefs = await SharedPreferences.getInstance();
+    final List<String>? jsonList = _prefs.getStringList(_key);
     if (jsonList == null) return [];
     return jsonList.map((str) => CustomFormulaData.fromMap(jsonDecode(str))).toList();
   }
 
   Future<void> addFormula(CustomFormulaData data) async {
-    final prefs = await SharedPreferences.getInstance();
+    if (state is! AsyncData) await future;
+
     final currentList = state.value ?? [];
     final newList = [...currentList, data];
 
     final List<String> jsonList = newList.map((item) => jsonEncode(item.toMap())).toList();
-    await prefs.setStringList(_key, jsonList);
+    await _prefs.setStringList(_key, jsonList);
 
     state = AsyncData(newList);
   }
