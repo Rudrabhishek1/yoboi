@@ -36,6 +36,8 @@ class CustomFormulaData {
   }
 
   Formula toFormula() {
+    Parser p = Parser();
+    Expression exp = p.parse(expression);
     return Formula(
       id: id,
       title: title,
@@ -44,8 +46,6 @@ class CustomFormulaData {
       inputUnits: List.filled(inputLabels.length, ''), // No units for custom yet
       resultUnit: '',
       calculate: (inputs) {
-        Parser p = Parser();
-        Expression exp = p.parse(expression);
         ContextModel cm = ContextModel();
         for (int i = 0; i < inputLabels.length; i++) {
           cm.bindVariable(Variable(inputLabels[i]), Number(inputs[i]));
