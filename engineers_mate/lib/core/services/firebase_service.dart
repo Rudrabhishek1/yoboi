@@ -44,8 +44,21 @@ class FirebaseService {
       final jsonString = remoteConfig.getString('remote_formulas');
       if (jsonString.isEmpty) return [];
 
-      final List<dynamic> jsonList = jsonDecode(jsonString);
-      return jsonList.map((map) => CustomFormulaData.fromMap(map)).toList();
+      final dynamic decoded = jsonDecode(jsonString);
+      // 🛡️ Sentinel: Safe parsing to prevent type errors on malformed external JSON
+      if (decoded is! List) return [];
+
+      final List<CustomFormulaData> formulas = [];
+      for (final item in decoded) {
+        if (item is Map<String, dynamic>) {
+          try {
+            formulas.add(CustomFormulaData.fromMap(item));
+          } catch (e) {
+            debugPrint("Skipping malformed remote formula item: $e");
+          }
+        }
+      }
+      return formulas;
     } catch (e) {
       debugPrint("Error parsing remote formulas: $e");
       return [];
