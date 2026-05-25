@@ -27,11 +27,14 @@ class CustomFormulaData {
   }
 
   factory CustomFormulaData.fromMap(Map<String, dynamic> map) {
+    // 🛡️ Sentinel: Safe conversion and defaults for deserialized values
     return CustomFormulaData(
-      id: map['id'],
-      title: map['title'],
-      inputLabels: List<String>.from(map['inputLabels']),
-      expression: map['expression'],
+      id: map['id']?.toString() ?? '',
+      title: map['title']?.toString() ?? '',
+      inputLabels: map['inputLabels'] is List
+          ? (map['inputLabels'] as List).map((e) => e.toString()).toList()
+          : [],
+      expression: map['expression']?.toString() ?? '',
     );
   }
 

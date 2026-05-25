@@ -1,0 +1,4 @@
+## 2024-05-25 - Insecure Deserialization in Factory Constructors
+**Vulnerability:** The application was vulnerable to insecure deserialization crashes. `FirebaseService.fetchRemoteFormulas` assumed the decoded JSON was a `List` of `Map`, and `CustomFormulaData.fromMap` directly cast map values without type safety or fallback defaults.
+**Learning:** Dart's dynamic typing during JSON deserialization requires explicit structure validation (`is List`, `is Map`) and safe property conversions (`?.toString() ?? ''`) to prevent remote data corruption from causing unhandled `TypeError` app crashes.
+**Prevention:** Always validate top-level and element structures before processing dynamically typed collections. Implement safe conversion operators and fallback defaults for all fields in factory constructors parsing external data.
