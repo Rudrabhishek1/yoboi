@@ -1,0 +1,3 @@
+## 2024-05-24 - Flutter PostFrameCallback Double Render Pattern
+**Learning:** Initializing state variables synchronously during `initState()` and then deferring a calculation that triggers a redundant `setState()` via `WidgetsBinding.instance.addPostFrameCallback` causes unnecessary extra frame renders and frame jitter upon navigation/screen load.
+**Action:** When a calculation only affects local state and doesn't require laying out first (e.g. converting a number based on default selections), perform it synchronously inside `initState()` instead of deferring it. Avoid trailing `setState()` calls inside helper methods when they are already being called from within a `setState()` block to properly batch updates.

@@ -13,14 +13,24 @@ class _QuickConvertScreenState extends State<QuickConvertScreen> {
   double _inputValue = 1.0;
 
   // Controllers for the input field
-  final TextEditingController _inputController = TextEditingController(text: '1.0');
+  final TextEditingController _inputController =
+      TextEditingController(text: '1.0');
 
   // Definitions for our conversions
   final List<String> _categories = ['Length', 'Mass', 'Temperature'];
 
   // Units to display for each category
   final Map<int, List<Enum>> _units = {
-    0: [LENGTH.meters, LENGTH.kilometers, LENGTH.centimeters, LENGTH.millimeters, LENGTH.miles, LENGTH.yards, LENGTH.feet, LENGTH.inches],
+    0: [
+      LENGTH.meters,
+      LENGTH.kilometers,
+      LENGTH.centimeters,
+      LENGTH.millimeters,
+      LENGTH.miles,
+      LENGTH.yards,
+      LENGTH.feet,
+      LENGTH.inches
+    ],
     1: [MASS.kilograms, MASS.grams, MASS.pounds, MASS.ounces, MASS.tons],
     2: [TEMPERATURE.celsius, TEMPERATURE.fahrenheit, TEMPERATURE.kelvin],
   };
@@ -35,10 +45,8 @@ class _QuickConvertScreenState extends State<QuickConvertScreen> {
     _selectedCategoryIndex = 0;
     _fromUnit = _units[0]![0];
     _toUnit = _units[0]![1];
-    // Defer conversion to build frame or ensure it runs once
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      _convert();
-    });
+    // Compute initial result synchronously to avoid a post-frame rebuild
+    _convert();
   }
 
   void _updateUnitsForCategory(int index) {
@@ -55,8 +63,10 @@ class _QuickConvertScreenState extends State<QuickConvertScreen> {
   void _convert() {
     if (_selectedCategoryIndex == 0) {
       // Length
-      var input = _inputValue.convertFromTo(_fromUnit as LENGTH, _toUnit as LENGTH);
-      debugPrint("Converting Length: $_inputValue from $_fromUnit to $_toUnit = $input");
+      var input =
+          _inputValue.convertFromTo(_fromUnit as LENGTH, _toUnit as LENGTH);
+      debugPrint(
+          "Converting Length: $_inputValue from $_fromUnit to $_toUnit = $input");
       _result = input?.toStringAsFixed(4) ?? "Error";
     } else if (_selectedCategoryIndex == 1) {
       // Mass
@@ -64,10 +74,10 @@ class _QuickConvertScreenState extends State<QuickConvertScreen> {
       _result = input?.toStringAsFixed(4) ?? "Error";
     } else if (_selectedCategoryIndex == 2) {
       // Temperature
-      var input = _inputValue.convertFromTo(_fromUnit as TEMPERATURE, _toUnit as TEMPERATURE);
+      var input = _inputValue.convertFromTo(
+          _fromUnit as TEMPERATURE, _toUnit as TEMPERATURE);
       _result = input?.toStringAsFixed(2) ?? "Error";
     }
-    setState(() {});
   }
 
   @override
@@ -109,7 +119,8 @@ class _QuickConvertScreenState extends State<QuickConvertScreen> {
                   // Input
                   TextField(
                     controller: _inputController,
-                    keyboardType: const TextInputType.numberWithOptions(decimal: true),
+                    keyboardType:
+                        const TextInputType.numberWithOptions(decimal: true),
                     decoration: const InputDecoration(
                       labelText: "Value",
                       border: OutlineInputBorder(),
