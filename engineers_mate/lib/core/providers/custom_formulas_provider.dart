@@ -27,11 +27,17 @@ class CustomFormulaData {
   }
 
   factory CustomFormulaData.fromMap(Map<String, dynamic> map) {
+    // 🛡️ Sentinel: Harden factory constructor to handle missing or malformed fields safely,
+    // avoiding null pointer or type cast exceptions from untrusted remote data.
     return CustomFormulaData(
-      id: map['id'],
-      title: map['title'],
-      inputLabels: List<String>.from(map['inputLabels']),
-      expression: map['expression'],
+      id: map['id']?.toString() ?? '',
+      title: map['title']?.toString() ?? '',
+      inputLabels: (map['inputLabels'] is List)
+              ? (map['inputLabels'] as List)
+                  .map((e) => e?.toString() ?? '')
+                  .toList()
+              : [],
+      expression: map['expression']?.toString() ?? '',
     );
   }
 
