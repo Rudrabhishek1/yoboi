@@ -19,18 +19,25 @@ class GridPainter extends CustomPainter {
   void paint(Canvas canvas, Size size) {
     final paint = Paint()
       ..color = Colors.white.withOpacity(0.1)
-      ..style = PaintingStyle.stroke
+      ..style = PaintingStyle.stroke // Explicitly required for drawPath to work with 1D segments
       ..strokeWidth = 1.0;
 
     const double step = 20.0;
 
+    // ⚡ Bolt: Batch grid lines into a single Path to minimize rendering overhead.
+    final path = Path();
+
     for (double x = 0; x < size.width; x += step) {
-      canvas.drawLine(Offset(x, 0), Offset(x, size.height), paint);
+      path.moveTo(x, 0);
+      path.lineTo(x, size.height);
     }
 
     for (double y = 0; y < size.height; y += step) {
-      canvas.drawLine(Offset(0, y), Offset(size.width, y), paint);
+      path.moveTo(0, y);
+      path.lineTo(size.width, y);
     }
+
+    canvas.drawPath(path, paint);
 
     // Draw some random "Technical" circles/lines
     final strongPaint = Paint()
