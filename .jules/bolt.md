@@ -1,0 +1,3 @@
+## 2025-05-28 - Expensive Eager Math Parsing in Flutter Closures
+**Learning:** In Dart/Flutter, using `Parser().parse()` from `math_expressions` on every recalculation inside a closure (e.g., as part of a `Formula` model callback) causes massive CPU overhead (~920ms vs ~40ms for 10k evals) and blocks the main UI thread during typing/sliding.
+**Action:** Always lazily cache the resulting `Expression` object using `cachedExp ??= Parser().parse(expression)` outside the evaluation loop/closure so that parsing happens exactly once per instance, yielding near-instant evaluations without mutating the overall state architecture.
