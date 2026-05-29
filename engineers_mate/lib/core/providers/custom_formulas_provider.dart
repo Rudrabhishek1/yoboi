@@ -27,11 +27,15 @@ class CustomFormulaData {
   }
 
   factory CustomFormulaData.fromMap(Map<String, dynamic> map) {
+    // 🛡️ Sentinel: Safe parsing of dynamic maps to prevent unhandled TypeError crashes
+    // Use toString() for strings and explicit 'is List' checks for collections
     return CustomFormulaData(
-      id: map['id'],
-      title: map['title'],
-      inputLabels: List<String>.from(map['inputLabels']),
-      expression: map['expression'],
+      id: map['id']?.toString() ?? '',
+      title: map['title']?.toString() ?? '',
+      inputLabels: map['inputLabels'] is List
+          ? (map['inputLabels'] as List).map((e) => e.toString()).toList()
+          : <String>[],
+      expression: map['expression']?.toString() ?? '',
     );
   }
 

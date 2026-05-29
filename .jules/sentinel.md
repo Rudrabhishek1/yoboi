@@ -1,0 +1,4 @@
+## 2024-05-24 - Insecure Deserialization in Dynamic JSON Parsing
+**Vulnerability:** Unsafe mapping of remote JSON payload directly into domain objects without structural validation or explicit type checking (using implicit dynamic `as List` or map access `map['id']` expecting exact types).
+**Learning:** Dart's dynamic typing combined with implicit casting during deserialization easily leads to `TypeError` and Application DoS when malformed JSON configs are processed. The remote configuration payload's shape must be explicitly validated.
+**Prevention:** Always validate top-level remote payload types (`is List`) and use strict inner filtering (`whereType<Map<String, dynamic>>`). Additionally, harden factory constructors (`fromMap`) by explicitly checking collection structures (`is List`) and providing safe type fallbacks (`?.toString() ?? ''`).
