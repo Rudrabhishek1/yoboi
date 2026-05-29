@@ -36,6 +36,7 @@ class CustomFormulaData {
   }
 
   Formula toFormula() {
+    Expression? cachedExp;
     return Formula(
       id: id,
       title: title,
@@ -44,13 +45,13 @@ class CustomFormulaData {
       inputUnits: List.filled(inputLabels.length, ''), // No units for custom yet
       resultUnit: '',
       calculate: (inputs) {
-        Parser p = Parser();
-        Expression exp = p.parse(expression);
+        // ⚡ Bolt: Cache expensive parse operation to avoid re-parsing on every calculation
+        cachedExp ??= Parser().parse(expression);
         ContextModel cm = ContextModel();
         for (int i = 0; i < inputLabels.length; i++) {
           cm.bindVariable(Variable(inputLabels[i]), Number(inputs[i]));
         }
-        return exp.evaluate(EvaluationType.REAL, cm);
+        return cachedExp!.evaluate(EvaluationType.REAL, cm);
       },
     );
   }
