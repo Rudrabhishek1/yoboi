@@ -44,8 +44,13 @@ class FirebaseService {
       final jsonString = remoteConfig.getString('remote_formulas');
       if (jsonString.isEmpty) return [];
 
-      final List<dynamic> jsonList = jsonDecode(jsonString);
-      return jsonList.map((map) => CustomFormulaData.fromMap(map)).toList();
+      final dynamic decoded = jsonDecode(jsonString);
+      if (decoded is! List) return [];
+
+      return decoded
+          .where((e) => e is Map<String, dynamic>)
+          .map((map) => CustomFormulaData.fromMap(map as Map<String, dynamic>))
+          .toList();
     } catch (e) {
       debugPrint("Error parsing remote formulas: $e");
       return [];
