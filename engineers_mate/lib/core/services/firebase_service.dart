@@ -19,21 +19,23 @@ class FirebaseService {
       await Firebase.initializeApp();
 
       final remoteConfig = FirebaseRemoteConfig.instance;
-      await remoteConfig.setConfigSettings(RemoteConfigSettings(
-        fetchTimeout: const Duration(minutes: 1),
-        minimumFetchInterval: const Duration(hours: 1), // Cache for 1 hour
-      ));
+      await remoteConfig.setConfigSettings(
+        RemoteConfigSettings(
+          fetchTimeout: const Duration(minutes: 1),
+          minimumFetchInterval: const Duration(hours: 1), // Cache for 1 hour
+        ),
+      );
 
       // Defaults
-      await remoteConfig.setDefaults(const {
-        "remote_formulas": "[]",
-      });
+      await remoteConfig.setDefaults(const {"remote_formulas": "[]"});
 
       await remoteConfig.fetchAndActivate();
       _isInitialized = true;
       debugPrint("Firebase Initialized Successfully");
     } catch (e) {
-      debugPrint("Firebase Initialization Failed (Expected in Test/No-Key Env): $e");
+      debugPrint(
+        "Firebase Initialization Failed (Expected in Test/No-Key Env): $e",
+      );
     }
   }
 
@@ -44,8 +46,16 @@ class FirebaseService {
       final jsonString = remoteConfig.getString('remote_formulas');
       if (jsonString.isEmpty) return [];
 
-      final List<dynamic> jsonList = jsonDecode(jsonString);
-      return jsonList.map((map) => CustomFormulaData.fromMap(map)).toList();
+      final dynamic decoded = jsonDecode(jsonString);
+      // 🛡️ Sentinel: Validate top-level structure is a List before mapping
+      if (decoded is! List) return [];
+
+      return decoded
+          .whereType<
+            Map<String, dynamic>
+          >() // 🛡️ Sentinel: Ensure elements are Map<String, dynamic>
+          .map((map) => CustomFormulaData.fromMap(map))
+          .toList();
     } catch (e) {
       debugPrint("Error parsing remote formulas: $e");
       return [];
