@@ -1,0 +1,4 @@
+## 2024-06-02 - Insecure Deserialization in Flutter
+**Vulnerability:** The application was vulnerable to runtime crashes (TypeError) due to insecure deserialization of remote JSON payloads in `FirebaseService` and `CustomFormulaData.fromMap`, where it assumed the types were correctly formatted lists and maps without explicit validation.
+**Learning:** Dart's dynamic typing (`dynamic`) combined with `as` or implicit casting inside factory constructors leads to app crashes when dealing with malformed external data. `List<String>.from` and direct assignment will fail if fields are unexpectedly missing or wrongly typed.
+**Prevention:** Always verify top-level structures (`is List`), ensure collection elements are specifically typed (e.g., `whereType<Map<String, dynamic>>`), and harden factory constructors by using safe type checking (`is List`) and null-aware fallbacks (`?.toString() ?? ''`) to prevent type coercion errors.
