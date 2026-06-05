@@ -14,25 +14,30 @@ class HistoryScreen extends ConsumerWidget {
         title: const Text("History"),
         actions: [
           IconButton(
+            tooltip: 'Clear History',
             icon: const Icon(Icons.delete),
             onPressed: () async {
-               // Confirm dialog
-               final confirm = await showDialog<bool>(
-                 context: context,
-                 builder: (context) => AlertDialog(
-                   title: const Text("Clear History"),
-                   content: const Text("Are you sure?"),
-                   actions: [
-                     TextButton(onPressed: () => Navigator.pop(context, false), child: const Text("Cancel")),
-                     TextButton(onPressed: () => Navigator.pop(context, true), child: const Text("Clear")),
-                   ],
-                 ),
-               );
+              // Confirm dialog
+              final confirm = await showDialog<bool>(
+                context: context,
+                builder: (context) => AlertDialog(
+                  title: const Text("Clear History"),
+                  content: const Text("Are you sure?"),
+                  actions: [
+                    TextButton(
+                        onPressed: () => Navigator.pop(context, false),
+                        child: const Text("Cancel")),
+                    TextButton(
+                        onPressed: () => Navigator.pop(context, true),
+                        child: const Text("Clear")),
+                  ],
+                ),
+              );
 
-               if (confirm == true) {
-                 await ref.read(historyProvider.notifier).clearHistory();
-                 // No need to pop, UI updates automatically
-               }
+              if (confirm == true) {
+                await ref.read(historyProvider.notifier).clearHistory();
+                // No need to pop, UI updates automatically
+              }
             },
           ),
         ],
@@ -49,10 +54,12 @@ class HistoryScreen extends ConsumerWidget {
               final item = history[index];
               return ListTile(
                 title: Text(item.formulaTitle),
-                subtitle: Text(item.timestamp.toLocal().toString().split('.')[0]),
+                subtitle:
+                    Text(item.timestamp.toLocal().toString().split('.')[0]),
                 trailing: Text(
                   item.result,
-                  style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+                  style: const TextStyle(
+                      fontWeight: FontWeight.bold, fontSize: 16),
                 ),
               );
             },
