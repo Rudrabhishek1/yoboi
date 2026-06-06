@@ -1,0 +1,3 @@
+## 2024-06-06 - Batching Canvas Operations in CustomPainter
+**Learning:** In Flutter, calling `canvas.drawLine` repeatedly inside a loop generates a separate draw call for each line, which significantly degrades performance on dense grids. However, when batching operations into a single `Path` via `moveTo`/`lineTo` and using `canvas.drawPath`, you must explicitly set the `Paint` object's `style = PaintingStyle.stroke`. While `drawLine` implicitly strokes, `drawPath` defaults to `PaintingStyle.fill` if omitted, causing severe visual regressions.
+**Action:** Always batch repetitive primitive drawing operations (lines, circles) into a single `Path` where possible, but always explicitly verify the `PaintingStyle` on the `Paint` object when converting.
