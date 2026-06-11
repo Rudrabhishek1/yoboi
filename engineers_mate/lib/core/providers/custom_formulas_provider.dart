@@ -27,11 +27,16 @@ class CustomFormulaData {
   }
 
   factory CustomFormulaData.fromMap(Map<String, dynamic> map) {
+    // 🛡️ Sentinel: Harden deserialization to prevent TypeError crashes from malformed JSON
     return CustomFormulaData(
-      id: map['id'],
-      title: map['title'],
-      inputLabels: List<String>.from(map['inputLabels']),
-      expression: map['expression'],
+      id: map['id']?.toString() ?? '',
+      title: map['title']?.toString() ?? '',
+      inputLabels: map['inputLabels'] is List
+          ? List<String>.from(
+              map['inputLabels'].map((e) => e?.toString() ?? ''),
+            )
+          : [],
+      expression: map['expression']?.toString() ?? '',
     );
   }
 
@@ -41,7 +46,10 @@ class CustomFormulaData {
       title: title,
       category: 'Custom',
       inputLabels: inputLabels,
-      inputUnits: List.filled(inputLabels.length, ''), // No units for custom yet
+      inputUnits: List.filled(
+        inputLabels.length,
+        '',
+      ), // No units for custom yet
       resultUnit: '',
       calculate: (inputs) {
         Parser p = Parser();
@@ -56,7 +64,10 @@ class CustomFormulaData {
   }
 }
 
-final customFormulasProvider = AsyncNotifierProvider<CustomFormulasNotifier, List<CustomFormulaData>>(CustomFormulasNotifier.new);
+final customFormulasProvider =
+    AsyncNotifierProvider<CustomFormulasNotifier, List<CustomFormulaData>>(
+      CustomFormulasNotifier.new,
+    );
 
 class CustomFormulasNotifier extends AsyncNotifier<List<CustomFormulaData>> {
   static const String _key = 'custom_formulas';
@@ -66,7 +77,9 @@ class CustomFormulasNotifier extends AsyncNotifier<List<CustomFormulaData>> {
     final prefs = await SharedPreferences.getInstance();
     final List<String>? jsonList = prefs.getStringList(_key);
     if (jsonList == null) return [];
-    return jsonList.map((str) => CustomFormulaData.fromMap(jsonDecode(str))).toList();
+    return jsonList
+        .map((str) => CustomFormulaData.fromMap(jsonDecode(str)))
+        .toList();
   }
 
   Future<void> addFormula(CustomFormulaData data) async {
@@ -74,7 +87,9 @@ class CustomFormulasNotifier extends AsyncNotifier<List<CustomFormulaData>> {
     final currentList = state.value ?? [];
     final newList = [...currentList, data];
 
-    final List<String> jsonList = newList.map((item) => jsonEncode(item.toMap())).toList();
+    final List<String> jsonList = newList
+        .map((item) => jsonEncode(item.toMap()))
+        .toList();
     await prefs.setStringList(_key, jsonList);
 
     state = AsyncData(newList);
