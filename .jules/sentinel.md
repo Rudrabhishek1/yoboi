@@ -1,0 +1,4 @@
+## 2024-06-16 - Prevent Insecure Deserialization Crashes
+**Vulnerability:** The application was exposed to `TypeError` crashes (a Denial of Service vulnerability) via insecure deserialization of remote payloads from Firebase Remote Config. If a malformed JSON payload was pushed (e.g. `inputLabels` is a string instead of a List), `List<String>.from(map['inputLabels'])` would crash the app. The JSON was mapping elements to `CustomFormulaData.fromMap` without explicitly type checking list elements.
+**Learning:** In Dart, dynamic deserialization uses implicit casts that fail aggressively at runtime (e.g. `as List` throws). Deserializing untrusted/remote JSON into domain models must validate structural types explicitly.
+**Prevention:** Always verify top-level structures (`is List`) and use safe type casting (`map['key'] is List ? List<String>.from(...) : []`) and fallback defaults when parsing dynamic JSON to domain models.
