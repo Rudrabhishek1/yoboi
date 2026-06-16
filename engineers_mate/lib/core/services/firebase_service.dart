@@ -33,7 +33,8 @@ class FirebaseService {
       _isInitialized = true;
       debugPrint("Firebase Initialized Successfully");
     } catch (e) {
-      debugPrint("Firebase Initialization Failed (Expected in Test/No-Key Env): $e");
+      debugPrint(
+          "Firebase Initialization Failed (Expected in Test/No-Key Env): $e");
     }
   }
 
@@ -44,8 +45,18 @@ class FirebaseService {
       final jsonString = remoteConfig.getString('remote_formulas');
       if (jsonString.isEmpty) return [];
 
-      final List<dynamic> jsonList = jsonDecode(jsonString);
-      return jsonList.map((map) => CustomFormulaData.fromMap(map)).toList();
+      final dynamic jsonList = jsonDecode(jsonString);
+
+      // 🛡️ Sentinel: Verify top-level JSON structure to prevent TypeError DoS
+      if (jsonList is! List) {
+        debugPrint("Remote formulas payload is not a List");
+        return [];
+      }
+
+      return jsonList
+          .where((item) => item is Map<String, dynamic>)
+          .map((map) => CustomFormulaData.fromMap(map as Map<String, dynamic>))
+          .toList();
     } catch (e) {
       debugPrint("Error parsing remote formulas: $e");
       return [];
