@@ -32,7 +32,9 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
 
     final allFormulas = ref.read(formulasProvider);
     setState(() {
-      _searchResults = allFormulas.where((f) => f.title.toLowerCase().contains(query.toLowerCase())).toList();
+      _searchResults = allFormulas
+          .where((f) => f.title.toLowerCase().contains(query.toLowerCase()))
+          .toList();
     });
   }
 
@@ -48,112 +50,117 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
             pinned: true,
             flexibleSpace: FlexibleSpaceBar(
               title: _isSearching
-                ? TextField(
-                    controller: _searchController,
-                    autofocus: true,
-                    style: const TextStyle(color: Colors.white),
-                    decoration: const InputDecoration(
-                      hintText: "Search formulas...",
-                      hintStyle: TextStyle(color: Colors.white70),
-                      border: InputBorder.none,
-                    ),
-                    onChanged: _runSearch,
-                  )
-                : const Text("Engineer's Mate"),
+                  ? TextField(
+                      controller: _searchController,
+                      autofocus: true,
+                      style: const TextStyle(color: Colors.white),
+                      decoration: const InputDecoration(
+                        hintText: "Search formulas...",
+                        hintStyle: TextStyle(color: Colors.white70),
+                        border: InputBorder.none,
+                      ),
+                      onChanged: _runSearch,
+                    )
+                  : const Text("Engineer's Mate"),
               background: const BlueprintBackground(),
             ),
             actions: [
-               IconButton(
-                 icon: Icon(_isSearching ? Icons.close : Icons.search),
-                 onPressed: () {
-                   setState(() {
-                     _isSearching = !_isSearching;
-                     if (!_isSearching) {
-                       _searchController.clear();
-                       _searchResults = [];
-                     }
-                   });
-                 },
-               ),
-               if (!_isSearching) ...[
-                 IconButton(
-                   icon: const Icon(Icons.add),
-                   onPressed: () {
-                     Navigator.push(
-                       context,
-                       MaterialPageRoute(builder: (context) => const FormulaCreationScreen()),
-                     );
-                   },
-                 ),
-                 IconButton(
-                   icon: const Icon(Icons.history),
-                   onPressed: () {
-                     Navigator.push(
-                       context,
-                       MaterialPageRoute(builder: (context) => const HistoryScreen()),
-                     );
-                   },
-                 )
-               ]
+              IconButton(
+                tooltip: _isSearching ? 'Close search' : 'Search formulas',
+                icon: Icon(_isSearching ? Icons.close : Icons.search),
+                onPressed: () {
+                  setState(() {
+                    _isSearching = !_isSearching;
+                    if (!_isSearching) {
+                      _searchController.clear();
+                      _searchResults = [];
+                    }
+                  });
+                },
+              ),
+              if (!_isSearching) ...[
+                IconButton(
+                  tooltip: 'Create formula',
+                  icon: const Icon(Icons.add),
+                  onPressed: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => const FormulaCreationScreen(),
+                      ),
+                    );
+                  },
+                ),
+                IconButton(
+                  tooltip: 'History',
+                  icon: const Icon(Icons.history),
+                  onPressed: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => const HistoryScreen(),
+                      ),
+                    );
+                  },
+                ),
+              ],
             ],
           ),
           if (_isSearching)
             SliverList(
-              delegate: SliverChildBuilderDelegate(
-                (context, index) {
-                  final formula = _searchResults[index];
-                  return ListTile(
-                    title: Text(formula.title),
-                    subtitle: Text(formula.category),
-                    onTap: () {
-                       Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => UniversalSolverScreen(formula: formula),
-                        ),
-                      );
-                    },
-                  );
-                },
-                childCount: _searchResults.length,
-              ),
+              delegate: SliverChildBuilderDelegate((context, index) {
+                final formula = _searchResults[index];
+                return ListTile(
+                  title: Text(formula.title),
+                  subtitle: Text(formula.category),
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) =>
+                            UniversalSolverScreen(formula: formula),
+                      ),
+                    );
+                  },
+                );
+              }, childCount: _searchResults.length),
             )
           else
             SliverPadding(
-            padding: const EdgeInsets.all(16.0),
-            sliver: SliverGrid.count(
-              crossAxisCount: 2,
-              mainAxisSpacing: 16.0,
-              crossAxisSpacing: 16.0,
-              children: const [
-                CategoryCard(
-                  title: 'Electrical',
-                  icon: Icons.electrical_services,
-                  color: Colors.amber,
-                ),
-                CategoryCard(
-                  title: 'Civil',
-                  icon: Icons.foundation,
-                  color: Colors.blueGrey,
-                ),
-                CategoryCard(
-                  title: 'Mechanical',
-                  icon: Icons.settings,
-                  color: Colors.orange,
-                ),
-                CategoryCard(
-                  title: 'Quick Convert',
-                  icon: Icons.swap_horiz,
-                  color: Colors.green,
-                ),
-                CategoryCard(
-                  title: 'Custom',
-                  icon: Icons.edit_note,
-                  color: Colors.purple,
-                ),
-              ],
+              padding: const EdgeInsets.all(16.0),
+              sliver: SliverGrid.count(
+                crossAxisCount: 2,
+                mainAxisSpacing: 16.0,
+                crossAxisSpacing: 16.0,
+                children: const [
+                  CategoryCard(
+                    title: 'Electrical',
+                    icon: Icons.electrical_services,
+                    color: Colors.amber,
+                  ),
+                  CategoryCard(
+                    title: 'Civil',
+                    icon: Icons.foundation,
+                    color: Colors.blueGrey,
+                  ),
+                  CategoryCard(
+                    title: 'Mechanical',
+                    icon: Icons.settings,
+                    color: Colors.orange,
+                  ),
+                  CategoryCard(
+                    title: 'Quick Convert',
+                    icon: Icons.swap_horiz,
+                    color: Colors.green,
+                  ),
+                  CategoryCard(
+                    title: 'Custom',
+                    icon: Icons.edit_note,
+                    color: Colors.purple,
+                  ),
+                ],
+              ),
             ),
-          ),
         ],
       ),
     );
@@ -194,10 +201,8 @@ class CategoryCard extends ConsumerWidget {
             Navigator.push(
               context,
               MaterialPageRoute(
-                builder: (context) => FormulaListScreen(
-                  category: 'Civil',
-                  formulas: formulas,
-                ),
+                builder: (context) =>
+                    FormulaListScreen(category: 'Civil', formulas: formulas),
               ),
             );
           } else if (title == 'Mechanical') {
@@ -219,14 +224,12 @@ class CategoryCard extends ConsumerWidget {
               ),
             );
           } else if (title == 'Custom') {
-             final formulas = ref.read(formulasByCategoryProvider('Custom'));
-             Navigator.push(
+            final formulas = ref.read(formulasByCategoryProvider('Custom'));
+            Navigator.push(
               context,
               MaterialPageRoute(
-                builder: (context) => FormulaListScreen(
-                  category: 'Custom',
-                  formulas: formulas,
-                ),
+                builder: (context) =>
+                    FormulaListScreen(category: 'Custom', formulas: formulas),
               ),
             );
           }
@@ -236,10 +239,7 @@ class CategoryCard extends ConsumerWidget {
             gradient: LinearGradient(
               begin: Alignment.topLeft,
               end: Alignment.bottomRight,
-              colors: [
-                color.withOpacity(0.7),
-                color,
-              ],
+              colors: [color.withOpacity(0.7), color],
             ),
           ),
           child: Column(
@@ -247,11 +247,7 @@ class CategoryCard extends ConsumerWidget {
             children: [
               Hero(
                 tag: 'icon_$title',
-                child: Icon(
-                  icon,
-                  size: 48,
-                  color: Colors.white,
-                ),
+                child: Icon(icon, size: 48, color: Colors.white),
               ),
               const SizedBox(height: 8),
               Text(
