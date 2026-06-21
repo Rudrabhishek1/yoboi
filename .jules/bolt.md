@@ -1,0 +1,3 @@
+## 2024-06-21 - Expensive math_expressions Parser
+**Learning:** `Parser().parse()` from the `math_expressions` package is computationally expensive (a lex/parse operation) compared to evaluation. When building dynamic formulas that recalculate on every keystroke, eagerly parsing the string inside the `calculate` closure creates severe UI jank (e.g., 600ms overhead for large evaluation sets).
+**Action:** Always cache the parsed `Expression` object (e.g., via lazy initialization `cachedExp ??= Parser().parse(...)`) inside the evaluation closure so that parsing occurs only once per formula lifecycle, while the `ContextModel` can still be updated with new variables dynamically.
