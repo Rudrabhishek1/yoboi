@@ -24,16 +24,20 @@ class HistoryItem {
   }
 
   factory HistoryItem.fromMap(Map<String, dynamic> map) {
+    // 🛡️ Sentinel: Harden mapping to handle malformed data types safely
     return HistoryItem(
-      formulaTitle: map['formulaTitle'],
-      result: map['result'],
-      timestamp: DateTime.parse(map['timestamp']),
+      formulaTitle: map['formulaTitle']?.toString() ?? 'Unknown',
+      result: map['result']?.toString() ?? '',
+      timestamp: DateTime.tryParse(map['timestamp']?.toString() ?? '') ??
+          DateTime.now(),
     );
   }
 }
 
 // Provider
-final historyProvider = AsyncNotifierProvider<HistoryNotifier, List<HistoryItem>>(HistoryNotifier.new);
+final historyProvider =
+    AsyncNotifierProvider<HistoryNotifier, List<HistoryItem>>(
+        HistoryNotifier.new);
 
 class HistoryNotifier extends AsyncNotifier<List<HistoryItem>> {
   static const String _key = 'calculation_history';
@@ -65,7 +69,8 @@ class HistoryNotifier extends AsyncNotifier<List<HistoryItem>> {
       newList.removeRange(20, newList.length);
     }
 
-    final List<String> jsonList = newList.map((item) => jsonEncode(item.toMap())).toList();
+    final List<String> jsonList =
+        newList.map((item) => jsonEncode(item.toMap())).toList();
     await prefs.setStringList(_key, jsonList);
 
     state = AsyncData(newList);
