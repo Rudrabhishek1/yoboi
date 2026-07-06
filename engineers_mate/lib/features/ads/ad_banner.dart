@@ -51,14 +51,14 @@ class _AdBannerState extends State<AdBanner> {
   @override
   Widget build(BuildContext context) {
     if (_isLoaded) {
-       // Mock Ad Banner
-       return Container(
-         alignment: Alignment.center,
-         width: double.infinity,
-         height: 50,
-         color: Colors.grey[300],
-         child: const Text("AdMob Banner Placeholder"),
-       );
+      // Mock Ad Banner
+      return Container(
+        alignment: Alignment.center,
+        width: double.infinity,
+        height: 50,
+        color: Colors.grey[300],
+        child: const Text("AdMob Banner Placeholder"),
+      );
     }
     return const SizedBox.shrink();
   }
