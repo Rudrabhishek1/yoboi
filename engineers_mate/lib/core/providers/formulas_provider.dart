@@ -20,7 +20,8 @@ final formulasProvider = Provider<List<Formula>>((ref) {
   ];
 });
 
-final formulasByCategoryProvider = Provider.family<List<Formula>, String>((ref, category) {
+final formulasByCategoryProvider =
+    Provider.family<List<Formula>, String>((ref, category) {
   final allFormulas = ref.watch(formulasProvider);
   return allFormulas.where((f) => f.category == category).toList();
 });

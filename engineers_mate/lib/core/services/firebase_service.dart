@@ -33,7 +33,8 @@ class FirebaseService {
       _isInitialized = true;
       debugPrint("Firebase Initialized Successfully");
     } catch (e) {
-      debugPrint("Firebase Initialization Failed (Expected in Test/No-Key Env): $e");
+      debugPrint(
+          "Firebase Initialization Failed (Expected in Test/No-Key Env): $e");
     }
   }
 
